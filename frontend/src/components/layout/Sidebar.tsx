@@ -3,10 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useStacksWallet } from "@/hooks/useStacksWallet";
 import Button from "../ui/Button";
 
 const Sidebar = () => {
     const pathname = usePathname();
+    const { isSignedIn, connectWallet } = useStacksWallet();
 
     const navItems = [
         { name: "Overview", icon: "analytics", path: "/dashboard" },
@@ -19,9 +21,9 @@ const Sidebar = () => {
     return (
         <aside className="hidden lg:flex flex-col h-screen sticky top-0 left-0 bg-surface-container-low border-r border-white/5 w-64">
             <div className="p-8">
-                <div className="text-2xl font-black italic text-primary-container plus-jakarta-sans">
+                <Link href="/" className="text-2xl font-black italic text-primary-container plus-jakarta-sans">
                     AEGIS VAULT
-                </div>
+                </Link>
                 <div className="text-[10px] uppercase tracking-[0.2em] text-outline mt-1 font-bold">
                     Institutional Grade
                 </div>
@@ -55,11 +57,17 @@ const Sidebar = () => {
             </nav>
 
             <div className="p-6">
-                <Link href="/borrow">
-                    <Button variant="primary" className="w-full">
-                        MINT aeUSD
+                {!isSignedIn ? (
+                    <Button variant="primary" className="w-full" onClick={connectWallet}>
+                        CONNECT WALLET
                     </Button>
-                </Link>
+                ) : (
+                    <Link href="/borrow">
+                        <Button variant="primary" className="w-full">
+                            MINT aeUSD
+                        </Button>
+                    </Link>
+                )}
             </div>
         </aside>
     );
