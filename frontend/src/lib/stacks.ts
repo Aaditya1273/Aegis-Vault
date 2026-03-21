@@ -47,7 +47,7 @@ export const EFFECTIVE_NETWORK = IS_SUBNET
     ? createNetwork({ network: "devnet", client: { baseUrl: SUBNET_URL } })
     : NETWORK;
 
-export const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
+export const CONTRACT_ADDRESS = "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
 export const VAULT_CONTRACT = "vault";
 export const AEUSD_CONTRACT = "aeusd";
 

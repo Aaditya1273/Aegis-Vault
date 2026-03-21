@@ -15,6 +15,7 @@
 (define-constant err-unhealthy-position (err u102))
 (define-constant err-invalid-amount (err u103))
 (define-constant err-not-authorized (err u104))
+(define-constant err-no-yield (err u105))
 
 ;; Protocol Parameters
 (define-constant ltv-ratio u70) ;; 70% Loan-to-Value
@@ -155,16 +156,42 @@
 
 ;; --- Phase 2: Auto-Deleverage & Repay Logic ---
 
-;; Protocol Repay (Called by Auto-Repay contract)
+(define-data-var total-yield-harvested uint u0)
+(define-data-var repayment-percentage uint u1) ;; 1% reduction per harvest for demo
+
+;; Internal Harvest Yield Logic
+(define-private (harvest-yield-internal (user principal))
+    (let (
+        (vault (get-vault user))
+        (debt (get debt vault))
+        (repay-amount (/ (* debt (var-get repayment-percentage)) u100))
+    )
+        (if (> debt u0)
+            (begin
+                ;; Update Vault debt directly
+                (map-set vaults { user: user } (merge vault {
+                    debt: (- debt (if (> repay-amount debt) debt repay-amount)),
+                    last-block: block-height
+                }))
+                ;; Update global stats
+                (var-set total-yield-harvested (+ (var-get total-yield-harvested) (if (> repay-amount debt) debt repay-amount)))
+                (ok (if (> repay-amount debt) debt repay-amount))
+            )
+            err-no-yield
+        )
+    )
+)
+
+;; Protocol Repay (Still available for external authorized bots)
 (define-public (protocol-repay (user principal) (amount uint))
     (let (
         (current-vault (get-vault user))
         (actual-repay (if (> amount (get debt current-vault)) (get debt current-vault) amount))
     )
-        ;; Check authorization (only auto-repay or authorized bots)
-        (asserts! (is-eq contract-caller .auto-repay) err-not-authorized)
+        ;; Check authorization (only authorized bots/owners)
+        (asserts! (is-eq tx-sender contract-owner) err-not-authorized)
         
-        ;; Update Vault debt without burning aeUSD (as it's settled by protocol yield)
+        ;; Update Vault debt
         (map-set vaults { user: user } (merge current-vault {
             debt: (- (get debt current-vault) actual-repay),
             last-block: block-height
@@ -179,10 +206,22 @@
     (let (
         (health-factor (calculate-health-factor user))
     )
-        (asserts! (< health-factor liquidation-threshold) err-not-authorized) ;; Only deleverage if risky
+        (asserts! (< health-factor liquidation-threshold) err-not-authorized)
         
-        ;; In a real scenario, this would use protocol reserves to buy back debt
-        ;; For the demo, we call harvest-yield with a boosted rate
-        (contract-call? .auto-repay harvest-yield user)
+        ;; Call local harvest logic
+        (harvest-yield-internal user)
     )
+)
+
+;; Admin Controls for Auto-Repay
+(define-public (set-repayment-percentage (new-percentage uint))
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set repayment-percentage new-percentage)
+        (ok true)
+    )
+)
+
+(define-read-only (get-total-yield-harvested)
+    (ok (var-get total-yield-harvested))
 )
