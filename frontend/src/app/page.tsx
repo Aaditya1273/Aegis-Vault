@@ -78,7 +78,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4 border-l border-white/10 pl-10 ml-auto lg:ml-0">
                         <button
                             onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}
-                            className="px-10 py-3 bg-[#FF9D00] text-black text-[11px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-white hover:text-black transition-all shadow-xl shadow-[#FF9D00]/20 active:scale-95"
+                            className="px-6 py-2 bg-[#FF9D00] text-black text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-white hover:text-black transition-all shadow-xl shadow-[#FF9D00]/20 active:scale-95"
                         >
                             {isSignedIn ? "Dashboard" : "Start Vault"}
                         </button>
@@ -111,7 +111,7 @@ export default function LandingPage() {
                                 transition={{ duration: 0.8, delay: 0.6 }}
                                 className="text-2xl text-slate-400 leading-relaxed mb-14 max-w-2xl font-medium"
                             >
-Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatically. No liquidations, no monthly payments, and no taxable events.                            </motion.p>
+                                Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatically. No liquidations, no monthly payments, and no taxable events.                            </motion.p>
 
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
@@ -119,7 +119,7 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                                 transition={{ duration: 0.8, delay: 0.8 }}
                                 className="flex flex-wrap gap-8 items-center"
                             >
-                                <Button size="xl" variant="primary" className="px-12 py-6 text-lg" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
+                                <Button size="lg" variant="primary" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
                                     <AceternityLogo />
                                     <span>{isSignedIn ? "Open Dashboard" : "Start Vault"}</span>
                                 </Button>
@@ -179,7 +179,7 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                         className="text-center mb-16"
                     >
                         <div className="text-[#FF9D00] font-black uppercase tracking-[0.4em] text-xs">The Aegis Standard</div>
-                        <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase italic">Institutional Primitive</h2>
+                        <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase">Institutional Primitive</h2>
                         <p className="text-slate-400 max-w-2xl mx-auto text-xl font-medium mt-6">Three surgical steps to financial sovereignty.</p>
                     </motion.div>
 
@@ -226,7 +226,7 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                             transition={{ duration: 0.8 }}
                         >
                             <div className="text-[#FF9D00] font-black uppercase tracking-[0.4em] text-xs mb-6">Market Dominance</div>
-                            <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase italic mb-10">Trusted Architecture</h2>
+                            <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase mb-10">Trusted Architecture</h2>
                             <p className="text-slate-400 text-xl font-medium leading-relaxed mb-12">
                                 Aegis-Vault is the only decentralized protocol that treats Bitcoin as a Tier-1 financial instrument. Our architecture is designed for $1B+ liquidity deployments with zero slippage and absolute solvency.
                             </p>
@@ -257,7 +257,7 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                                             <Lock className="text-white w-8 h-8" />
                                         </div>
                                         <div>
-                                            <p className="text-white font-black font-headline text-lg uppercase italic">Vault Security: Grade A+</p>
+                                            <p className="text-white font-black font-headline text-lg uppercase">Vault Security: Grade A+</p>
                                             <p className="text-slate-500 text-sm font-medium tracking-tight">Triple-audited logic since Genesis.</p>
                                         </div>
                                     </div>
@@ -278,7 +278,7 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                             className="text-center mb-32"
                         >
                             <div className="text-[#FF9D00] font-black uppercase tracking-[0.4em] text-xs mb-6">Risk Infrastructure</div>
-                            <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase italic">Institutional Security</h2>
+                            <h2 className="text-6xl md:text-8xl font-black font-headline text-white tracking-tighter uppercase">Institutional Security</h2>
                         </motion.div>
 
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -312,12 +312,12 @@ Mint aeUSD from your BTC and let Bitcoin-native yield repay your loan automatica
                     <div className="glass-panel p-20 rounded-[4rem] border border-white/10 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-tr from-[#FF9D00]/5 to-transparent transition-opacity group-hover:opacity-100 opacity-50"></div>
                         <div className="relative z-10 max-w-2xl mx-auto text-center">
-                            <h2 className="text-5xl md:text-7xl font-black font-headline text-white tracking-tighter uppercase italic mb-8">Council of Aegis</h2>
+                            <h2 className="text-5xl md:text-7xl font-black font-headline text-white tracking-tighter uppercase mb-8">Council of Aegis</h2>
                             <p className="text-slate-400 text-xl font-medium leading-relaxed mb-12">
                                 Holders of $AEGIS govern protocol parameters, from LTV ratios to yield distribution. Join the sovereign elite and shape the future of Bitcoin-native finance.
                             </p>
-                            <Button size="xl" variant="outline" className="px-12 py-6 text-lg border-white/20 hover:border-[#FF9D00] hover:text-[#FF9D00]">
-                                <Users className="w-6 h-6" />
+                            <Button size="lg" variant="outline" className="border-white/20 hover:border-[#FF9D00] hover:text-[#FF9D00]">
+                                <Users className="w-5 h-5" />
                                 <span>Review DAO Constitution</span>
                             </Button>
                         </div>
