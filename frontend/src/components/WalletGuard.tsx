@@ -8,22 +8,31 @@ export default function WalletGuard({ children }: { children: React.ReactNode })
     const router = useRouter();
     const pathname = usePathname();
     const [isAuthorized, setIsAuthorized] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
         const checkAuth = () => {
-            if (!userSession.isUserSignedIn() && pathname !== "/") {
-                setShowPopup(true);
+            const signedIn = userSession.isUserSignedIn();
+            if (!signedIn && pathname !== "/") {
                 setTimeout(() => {
                     router.push("/");
                 }, 2000);
             } else {
                 setIsAuthorized(true);
             }
+            setIsChecking(false);
         };
 
         checkAuth();
     }, [pathname, router]);
+
+    if (isChecking && pathname !== "/") {
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     if (!isAuthorized && pathname !== "/") {
         return (

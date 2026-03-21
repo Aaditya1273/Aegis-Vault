@@ -2,107 +2,104 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Particles from "./ui/Particles";
 import SoftAurora from "./ui/SoftAurora";
-import SplitText from "./ui/SplitText";
+import MeteorShower from "./ui/MeteorShower";
+import LogoField from "./ui/LogoField";
+import DynamicMesh from "./ui/DynamicMesh";
 
 export default function Hero() {
     return (
-        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20 mt-16">
-            {/* Background Layer: WebGL Effects */}
-            <div className="absolute inset-0 z-0">
-                <Particles
-                    particleColors={["#ffffff", "#8b5cf6"]}
-                    particleCount={300}
-                    speed={0.15}
-                    particleBaseSize={120}
-                    moveParticlesOnHover
-                />
+        <section className="relative min-h-screen flex flex-col overflow-hidden">
+            {/* Atmospheric Layer */}
+            <div className="absolute inset-0 z-0 bg-[#020202]">
+                <DynamicMesh />
+                <MeteorShower />
+                <LogoField />
                 <SoftAurora
                     color1="#000000"
-                    color2="#4c1d95"
-                    brightness={0.8}
-                    speed={0.4}
+                    color2="#1e1b4b"
+                    brightness={1.5}
+                    speed={0.1}
                 />
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="mb-8 inline-block"
-                >
-                    <span className="glass px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] text-primary border-primary/20 shadow-[0_0_20px_rgba(139,92,246,0.1)]">
-                        Powered by Stacks sBTC
-                    </span>
-                </motion.div>
-
-                <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9]">
-                    <SplitText
-                        text="SELF-REPAYING"
-                        className="block text-white"
-                        delay={50}
-                        duration={1}
-                        ease="power4.out"
-                    />
-                    <span className="gradient-text bg-gradient-to-r from-primary via-purple-400 to-accent">
-                        <SplitText
-                            text="CREDIT PROTOCOL"
-                            className="block"
-                            delay={100}
-                            duration={1.2}
-                            ease="power4.out"
-                        />
-                    </span>
+            {/* Main Content Area - Perfectly Centered */}
+            <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 className="text-6xl md:text-[8rem] font-black tracking-[-0.05em] mb-10 leading-[0.85] text-white">
+                    <div className="overflow-hidden py-2">
+                        {"SELF-REPAYING".split("").map((char, i) => (
+                            <motion.span
+                                key={i}
+                                initial={{ y: "100%" }}
+                                animate={{ y: 0 }}
+                                transition={{ duration: 0.8, delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                                className="inline-block"
+                            >
+                                {char === " " ? "\u00A0" : char}
+                            </motion.span>
+                        ))}
+                    </div>
+                    <div className="overflow-hidden py-2 -mt-2">
+                        <span className="gradient-text bg-gradient-to-r from-orange-500 via-amber-400 to-orange-600">
+                            {"CREDIT SCALE".split("").map((char, i) => (
+                                <motion.span
+                                    key={i}
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    transition={{ duration: 0.8, delay: (13 + i) * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                                    className="inline-block"
+                                >
+                                    {char === " " ? "\u00A0" : char}
+                                </motion.span>
+                            ))}
+                        </span>
+                    </div>
                 </h1>
 
                 <motion.p
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-xl md:text-2xl text-foreground/70 mb-12 max-w-2xl mx-auto leading-relaxed"
+                    transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-xl md:text-2xl font-medium text-foreground/50 mb-16 max-w-3xl mx-auto leading-relaxed tracking-tight"
                 >
-                    Mint <span className="text-white font-semibold">aeUSD</span> against your Bitcoin.
-                    No monthly payments—your credit line repays itself automatically through native Stacks yield.
+                    Engineered for the Institutional Bitcoin era.
+                    Zero manual repayments. 100% native PoX yield. Non-custodial at the core.
                 </motion.p>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
-                    className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    className="flex flex-col sm:flex-row gap-8 justify-center items-center"
                 >
-                    <Link href="/vaults" className="btn-primary text-lg px-10 py-4 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_50px_rgba(139,92,246,0.5)] transition-all">
-                        Open Your Vault
+                    <Link href="/vaults" className="btn-primary text-xl px-12 py-5 rounded-2xl shadow-[0_20px_50px_rgba(249,115,22,0.2)] hover:shadow-[0_30px_70px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-1">
+                        Get Started
                     </Link>
-                    <button className="glass px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-all border-white/5">
-                        View Protocol Docs
+                    <button className="glass px-12 py-5 rounded-2xl font-black text-xl hover:bg-white/10 transition-all border border-white/10 tracking-tight">
+                        Protocol Whitepaper
                     </button>
                 </motion.div>
+            </div>
 
+            {/* Stats Bottom Anchored */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
                 <motion.div
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.6 }}
-                    transition={{ duration: 1, delay: 1 }}
-                    className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-12"
+                    animate={{ opacity: 0.8 }}
+                    transition={{ duration: 1, delay: 1.2 }}
+                    className="grid grid-cols-2 md:grid-cols-4 gap-12 border-t border-white/5 pt-12"
                 >
-                    <div className="flex flex-col">
-                        <span className="text-3xl font-black text-white">150%</span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/50">Min Collateral</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-3xl font-black text-white">0%</span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/50">Manual Debt</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-3xl font-black text-white">$10M+</span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/50">Protocol TVL</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-3xl font-black text-white">PoX</span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/50">Yield Native</span>
-                    </div>
+                    {[
+                        { val: "150%", label: "Collateral Floor" },
+                        { val: "PoX", label: "Auto-Repayment" },
+                        { val: "2s", label: "Subnet Speed" },
+                        { val: "Formal", label: "Verified Code" }
+                    ].map((item, i) => (
+                        <div key={i} className="flex flex-col items-center md:items-start">
+                            <span className="text-4xl font-black text-white tracking-tighter mb-1">{item.val}</span>
+                            <span className="text-[10px] uppercase tracking-[0.3em] font-black text-foreground/40">{item.label}</span>
+                        </div>
+                    ))}
                 </motion.div>
             </div>
         </section>

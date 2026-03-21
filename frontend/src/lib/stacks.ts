@@ -4,40 +4,65 @@ import {
     showConnect
 } from "@stacks/connect";
 import {
-    StacksMainnet,
-    StacksTestnet,
-    StacksDevnet
+    createNetwork
 } from "@stacks/network";
 import {
-    callReadOnlyFunction,
-    standardPrincipalCV,
-    uintCV,
-    cvToJSON
+    fetchCallReadOnlyFunction,
+    cvToJSON,
+    Cl
 } from "@stacks/transactions";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
-export const userSession = new UserSession({ appConfig });
 
-export const NETWORK = new StacksDevnet(); // Switch to Mainnet/Testnet for production
-export const SUBNET_URL = "http://localhost:18443"; // Placeholder for Subnet RPC
+const createSafeUserSession = (): UserSession => {
+    if (typeof window === "undefined") return new UserSession({ appConfig });
+    try {
+        // Test if localStorage is accessible
+        localStorage.getItem("test");
+        return new UserSession({ appConfig });
+    } catch (e) {
+        console.warn("Aegis-Vault: localStorage access is denied. Session will not persist.");
+        // Return a mock object to prevent the entire app from crashing during module evaluation
+        return {
+            appConfig,
+            isUserSignedIn: () => false,
+            isSignInPending: () => false,
+            loadUserData: () => null,
+            signUserOut: () => { },
+            // Add stubs for other potential calls
+            generatePreSignRequest: () => "",
+            handlePendingSignIn: async () => { },
+            store: {}
+        } as unknown as UserSession;
+    }
+};
+
+export const userSession = createSafeUserSession();
+
+// Network Configuration
+export const NETWORK = createNetwork("devnet"); // Switch to "mainnet" or "testnet" for production
+export const SUBNET_URL = "http://localhost:18443";
 export const IS_SUBNET = process.env.NEXT_PUBLIC_IS_SUBNET === "true";
 
 export const EFFECTIVE_NETWORK = IS_SUBNET
-    ? new StacksDevnet({ url: SUBNET_URL })
+    ? createNetwork({ network: "devnet", client: { baseUrl: SUBNET_URL } })
     : NETWORK;
 
-export const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM"; // Devnet default
+export const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 export const VAULT_CONTRACT = "vault";
 export const AEUSD_CONTRACT = "aeusd";
 
+/**
+ * Fetches vault statistics for a given owner.
+ */
 export const getVaultStats = async (ownerAddress: string) => {
     try {
-        const result = await callReadOnlyFunction({
-            network: NETWORK,
+        const result = await fetchCallReadOnlyFunction({
+            network: EFFECTIVE_NETWORK,
             contractAddress: CONTRACT_ADDRESS,
             contractName: VAULT_CONTRACT,
             functionName: "get-vault",
-            functionArgs: [standardPrincipalCV(ownerAddress)],
+            functionArgs: [Cl.standardPrincipal(ownerAddress)],
             senderAddress: ownerAddress,
         });
         return cvToJSON(result).value;
@@ -47,6 +72,9 @@ export const getVaultStats = async (ownerAddress: string) => {
     }
 };
 
+/**
+ * Initiates the wallet connection flow.
+ */
 export const login = () => {
     showConnect({
         appDetails: {
@@ -60,40 +88,49 @@ export const login = () => {
     });
 };
 
+/**
+ * Signs the user out and reloads the page.
+ */
 export const logout = () => {
     userSession.signUserOut();
     window.location.reload();
 };
 
+/**
+ * Deposits sBTC collateral into the vault.
+ */
 export const depositCollateral = async (amount: number) => {
     const { openContractCall } = await import("@stacks/connect");
 
     await openContractCall({
-        network: NETWORK,
+        network: EFFECTIVE_NETWORK,
         contractAddress: CONTRACT_ADDRESS,
         contractName: VAULT_CONTRACT,
         functionName: "deposit-sbtc",
-        functionArgs: [uintCV(amount)],
-        postConditions: [], // Add post-conditions for safety
+        functionArgs: [Cl.uint(amount)],
+        postConditions: [],
         onFinish: (data) => {
             console.log("Transaction ID:", (data as any).txId || (data as any).txid);
         },
         onCancel: () => {
             console.log("Transaction canceled");
         },
-        sponsored: true, // This enables Account Abstraction/Sponsored UX
+        sponsored: true,
     });
 };
 
+/**
+ * Mints aeUSD stablecoins against collateral.
+ */
 export const mintaeUSD = async (amount: number) => {
     const { openContractCall } = await import("@stacks/connect");
 
     await openContractCall({
-        network: NETWORK,
+        network: EFFECTIVE_NETWORK,
         contractAddress: CONTRACT_ADDRESS,
         contractName: VAULT_CONTRACT,
         functionName: "mint-aeusd",
-        functionArgs: [uintCV(amount)],
+        functionArgs: [Cl.uint(amount)],
         postConditions: [],
         onFinish: (data) => {
             console.log("Transaction ID:", (data as any).txId || (data as any).txid);

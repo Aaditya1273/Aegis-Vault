@@ -6,40 +6,30 @@ import ConnectWallet from "./ConnectWallet";
 
 export default function Navbar() {
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-20">
-                    <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10">
-                            <Image
-                                src="/aegis_vault_logo_1774016007592.png"
-                                alt="Aegis-Vault Logo"
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="text-2xl font-bold gradient-text tracking-tight">
-                            Aegis-Vault
-                        </span>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-8">
-                        <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-                            Protocol
-                        </Link>
-                        <Link href="/vaults" className="text-sm font-medium hover:text-primary transition-colors">
-                            Dashboard
-                        </Link>
-                        <Link href="https://docs.stacks.co" target="_blank" className="text-sm font-medium hover:text-primary transition-colors">
-                            Docs
-                        </Link>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <ConnectWallet />
-                    </div>
+        <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+            <nav className="glass-pill px-8 py-3 flex items-center gap-12 pointer-events-auto border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                <div className="flex items-center gap-3">
+                    <span className="text-xl font-black gradient-text tracking-[-0.05em]">
+                        AEGIS
+                    </span>
                 </div>
-            </div>
-        </nav>
+
+                <div className="hidden md:flex items-center gap-8">
+                    <Link href="/" className="text-xs font-bold uppercase tracking-widest text-foreground/60 hover:text-primary transition-colors">
+                        Protocol
+                    </Link>
+                    <Link href="/vaults" className="text-xs font-bold uppercase tracking-widest text-foreground/60 hover:text-primary transition-colors">
+                        Vaults
+                    </Link>
+                    <Link href="https://docs.stacks.co" target="_blank" className="text-xs font-bold uppercase tracking-widest text-foreground/60 hover:text-primary transition-colors">
+                        Docs
+                    </Link>
+                </div>
+
+                <div className="flex items-center gap-4 border-l border-white/10 pl-8">
+                    <ConnectWallet />
+                </div>
+            </nav>
+        </div>
     );
 }

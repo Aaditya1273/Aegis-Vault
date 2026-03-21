@@ -36,10 +36,22 @@
     (default-to { collateral: u0, debt: u0, last-block: u0 } (map-get? vaults { user: user }))
 )
 
-;; In Phase 1, we simulate the price as 1:1 or use a placeholder
-;; Actual oracle integration happens in Phase 2
+;; Use the Oracle contract for real-time pricing
 (define-read-only (get-sbtc-price)
-    (ok u100000000) ;; Placeholder for 1 sBTC = $100,000 (with decimals)
+    (contract-call? .oracle get-price)
+)
+
+(define-read-only (calculate-health-factor (user principal))
+    (let (
+        (vault (get-vault user))
+        (price (unwrap-panic (get-sbtc-price)))
+        (collateral-value (/ (* (get collateral vault) price) u100000000))
+    )
+        (if (is-eq (get debt vault) u0)
+            u1000 ;; Infinite health if no debt
+            (/ (* collateral-value u100) (get debt vault))
+        )
+    )
 )
 
 (define-read-only (calculate-max-mint (collateral uint))
@@ -141,21 +153,36 @@
     )
 )
 
-;; Phase 2 Bonus Logic (Placeholder for Auto-Repay Hook)
+;; --- Phase 2: Auto-Deleverage & Repay Logic ---
+
+;; Protocol Repay (Called by Auto-Repay contract)
 (define-public (protocol-repay (user principal) (amount uint))
     (let (
         (current-vault (get-vault user))
         (actual-repay (if (> amount (get debt current-vault)) (get debt current-vault) amount))
     )
-        ;; Only the Auto-Repay contract can call this
+        ;; Check authorization (only auto-repay or authorized bots)
         (asserts! (is-eq contract-caller .auto-repay) err-not-authorized)
         
-        ;; Update Vault (No burning needed if we assume protocol yield is internal)
+        ;; Update Vault debt without burning aeUSD (as it's settled by protocol yield)
         (map-set vaults { user: user } (merge current-vault {
             debt: (- (get debt current-vault) actual-repay),
             last-block: block-height
         }))
         
         (ok actual-repay)
+    )
+)
+
+;; Auto-Deleverage Engine: Triggered if health factor drops below a threshold
+(define-public (auto-deleverage (user principal))
+    (let (
+        (health-factor (calculate-health-factor user))
+    )
+        (asserts! (< health-factor liquidation-threshold) err-not-authorized) ;; Only deleverage if risky
+        
+        ;; In a real scenario, this would use protocol reserves to buy back debt
+        ;; For the demo, we call harvest-yield with a boosted rate
+        (contract-call? .auto-repay harvest-yield user)
     )
 )

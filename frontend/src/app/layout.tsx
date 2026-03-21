@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import TargetCursor from "@/components/ui/TargetCursor";
+import FloatingOrb from "@/components/ui/FloatingOrb";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,10 +29,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} dark bg-background text-foreground antialiased selection:bg-primary/30`}>
-        <TargetCursor targetSelector=".cursor-target, .btn-primary, .glass, a, button" />
+      <body className={`${inter.className} dark bg-[#020202] text-foreground antialiased selection:bg-primary/30 min-h-screen relative`}>
+        <div className="fixed inset-0 grid-background z-0 pointer-events-none" />
+        <div className="fixed inset-0 noise-overlay z-[100] pointer-events-none" />
         <Navbar />
-        {children}
+        <div className="relative z-10">
+          {children}
+        </div>
+        <FloatingOrb />
       </body>
     </html>
   );
