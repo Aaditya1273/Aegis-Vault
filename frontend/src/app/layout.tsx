@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthGuard from "@/components/layout/AuthGuard";
 import AtmosphericLayer from "@/components/ui/AtmosphericLayer";
 import OrbWidget from "@/components/ui/OrbWidget";
+import SmoothScroll from "@/components/layout/SmoothScroll";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -37,12 +38,15 @@ export default function RootLayout({
             </head>
             <body
                 className={`${plusJakartaSans.variable} ${inter.variable} antialiased bg-surface text-on-surface`}
+                suppressHydrationWarning
             >
                 <AuthGuard>
-                    <div className="noise-overlay" />
-                    <AtmosphericLayer />
-                    {children}
-                    <OrbWidget />
+                    <SmoothScroll>
+                        <div className="noise-overlay" />
+                        <AtmosphericLayer />
+                        {children}
+                        <OrbWidget />
+                    </SmoothScroll>
                 </AuthGuard>
             </body>
         </html>
