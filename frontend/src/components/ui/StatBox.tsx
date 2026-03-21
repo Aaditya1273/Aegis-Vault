@@ -1,55 +1,64 @@
+"use client";
+
 import React from "react";
+import { motion } from "framer-motion";
 import Card from "./Card";
 
 interface StatBoxProps {
     label: string;
     value: string;
+    trend?: string | { value: string; isUp: boolean };
+    asset?: string;
     subValue?: string;
-    trend?: {
-        value: string;
-        isUp: boolean;
-    };
-    assetLabel?: string;
-    className?: string;
+    icon?: string;
 }
 
-const StatBox: React.FC<StatBoxProps> = ({
-    label,
-    value,
-    subValue,
-    trend,
-    assetLabel,
-    className = "",
-}) => {
+const StatBox: React.FC<StatBoxProps> = ({ label, value, trend, asset, subValue, icon }) => {
+    const isUp = typeof trend === "string" ? trend.includes("+") : trend?.isUp;
+    const trendValue = typeof trend === "string" ? trend : trend?.value;
+
     return (
-        <Card className={`p-8 group ${className}`}>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-primary-container/10" />
-            <p className="text-xs font-bold text-outline headline-font uppercase tracking-widest mb-4">
-                {label}
-            </p>
-            <h2 className="text-3xl font-bold headline-font tabular-nums mb-2">
-                {value}
-            </h2>
-            <div className="flex flex-col gap-1">
-                {subValue && (
-                    <p className="text-xs text-outline font-medium">{subValue}</p>
+        <Card variant="low" className="p-8 relative overflow-hidden group">
+            <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                className="flex justify-between items-start mb-6"
+            >
+                <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-outline mb-2 italic">
+                        {label}
+                    </p>
+                    <h3 className="text-4xl font-black headline-font tracking-tighter text-on-surface tabular-nums">
+                        {value}
+                    </h3>
+                    {subValue && <p className="text-xs text-on-surface-variant/60 font-medium mt-1">{subValue}</p>}
+                </div>
+                {icon && (
+                    <div className="bg-surface-container-highest/50 p-3 rounded-2xl border border-white/5">
+                        <span className="material-symbols-outlined text-primary-container text-2xl">{icon}</span>
+                    </div>
                 )}
-                {(trend || assetLabel) && (
-                    <div className="flex gap-4 text-xs font-medium">
-                        {trend && (
-                            <span className={`${trend.isUp ? "text-tertiary-fixed-dim" : "text-error"} flex items-center gap-1`}>
-                                <span className="material-symbols-outlined text-sm">
-                                    {trend.isUp ? "trending_up" : "trending_down"}
-                                </span>
-                                {trend.value}
-                            </span>
-                        )}
-                        {assetLabel && (
-                            <span className="text-outline uppercase tracking-wider">{assetLabel}</span>
-                        )}
+            </motion.div>
+
+            <div className="flex items-center gap-4">
+                {asset && (
+                    <span className="text-[10px] font-black px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant uppercase tracking-[0.2em] italic border border-white/5">
+                        {asset}
+                    </span>
+                )}
+                {trend && (
+                    <div className={`flex items-center gap-1.5 ${isUp ? "text-tertiary-fixed-dim" : "text-error"}`}>
+                        <span className="material-symbols-outlined text-base font-bold">
+                            {isUp ? "trending_up" : "trending_down"}
+                        </span>
+                        <span className="text-xs font-black italic tracking-tight">{trendValue}</span>
                     </div>
                 )}
             </div>
+
+            {/* Decorative interactive glow */}
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary-container/5 rounded-full blur-[40px] group-hover:bg-primary-container/10 transition-colors duration-700" />
         </Card>
     );
 };

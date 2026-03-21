@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { motion } from "framer-motion";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "ghost" | "outline";
@@ -13,29 +16,35 @@ const Button: React.FC<ButtonProps> = ({
     className = "",
     ...props
 }) => {
-    const baseStyles = "headline-font font-bold rounded-full transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 cursor-pointer";
+    const baseStyles = "headline-font font-black rounded-full transition-all flex items-center justify-center gap-3 cursor-pointer select-none";
 
     const variantStyles = {
-        primary: "bg-gradient-to-br from-primary-container to-secondary-container text-on-primary-fixed aegis-glow hover:brightness-110",
-        secondary: "bg-surface-container-highest border border-outline-variant/20 text-on-surface hover:bg-surface-variant",
-        outline: "border border-primary-container/30 text-primary-container hover:bg-primary-container/10",
+        primary: "bg-surface text-white border border-white/10 hover:border-primary-container shadow-[0_0_20px_rgba(0,0,0,0.5)]",
+        secondary: "bg-surface-container-highest border border-white/5 text-on-surface hover:bg-white/5",
+        outline: "border border-white/20 text-white hover:border-primary-container hover:bg-primary-container/5",
         ghost: "text-on-surface-variant hover:text-white hover:bg-white/5",
     };
 
     const sizeStyles = {
-        sm: "px-4 py-1.5 text-xs",
-        md: "px-6 py-3 text-sm",
-        lg: "px-8 py-4 text-base",
-        xl: "px-10 py-5 text-lg font-black uppercase tracking-widest",
+        sm: "px-5 py-2 text-[10px] uppercase tracking-[0.2em]",
+        md: "px-8 py-4 text-xs uppercase tracking-[0.3em]",
+        lg: "px-10 py-5 text-sm uppercase tracking-[0.4em]",
+        xl: "px-14 py-7 text-base uppercase tracking-[0.5em] font-black italic",
     };
 
     return (
-        <button
+        <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 100, damping: 30 }}
             className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-            {...props}
+            {...(props as any)}
         >
             {children}
-        </button>
+            {variant === "primary" && (
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary-container/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+        </motion.button>
     );
 };
 

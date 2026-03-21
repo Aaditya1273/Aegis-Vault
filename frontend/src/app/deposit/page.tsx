@@ -7,9 +7,11 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { depositCollateral } from "@/lib/stacks";
+import { useBalances } from "@/hooks/useBalances";
 
 export default function DepositPage() {
     const [amount, setAmount] = useState("");
+    const { sbtcBalance, loading } = useBalances();
 
     const btcAmount = parseFloat(amount) || 0;
     const sbtcAmount = btcAmount.toFixed(4);
@@ -57,7 +59,7 @@ export default function DepositPage() {
                                         label="Amount to Deposit"
                                         symbol="BTC"
                                         icon="currency_bitcoin"
-                                        balance="2.405 BTC"
+                                        balance={`${sbtcBalance.toFixed(4)} BTC`}
                                         placeholder="0.00"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}

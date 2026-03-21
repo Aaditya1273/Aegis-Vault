@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { motion } from "framer-motion";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
@@ -15,37 +18,42 @@ const Input: React.FC<InputProps> = ({
     ...props
 }) => {
     return (
-        <div className="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant/10 group focus-within:border-primary-container/30 transition-all duration-300">
-            <div className="flex justify-between items-center mb-4">
-                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-panel p-8 rounded-2xl border border-white/5 group focus-within:border-primary-container/30 transition-all duration-500 shadow-2xl bg-surface/20"
+        >
+            <div className="flex justify-between items-center mb-6">
+                <label className="text-[10px] font-black text-outline uppercase tracking-[0.3em] italic">
                     {label}
                 </label>
                 {balance && (
-                    <span className="text-xs text-on-surface-variant font-medium">
+                    <span className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest italic">
                         Balance: {balance}
                     </span>
                 )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
                 <input
-                    className="bg-transparent border-none p-0 text-4xl md:text-5xl font-headline font-bold text-on-surface w-full focus:ring-0 placeholder:text-on-surface-variant/20 tabular-nums outline-none"
+                    className="bg-transparent border-none p-0 text-5xl md:text-6xl font-black headline-font text-white w-full focus:ring-0 placeholder:text-white/5 tabular-nums outline-none tracking-tighter"
                     {...props}
                 />
                 {symbol && (
-                    <div className="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant/10">
+                    <div className="flex items-center gap-3 bg-surface-container-highest/50 px-5 py-3 rounded-2xl border border-white/5 shadow-lg backdrop-blur-xl">
                         {icon && (
                             <span
-                                className={`material-symbols-outlined ${symbol === 'BTC' ? 'text-[#F7931A]' : 'text-primary-container'}`}
+                                className={`material-symbols-outlined text-2xl ${symbol === 'BTC' ? 'text-[#F7931A]' : 'text-primary-container'}`}
                                 style={{ fontVariationSettings: "'FILL' 1" }}
                             >
                                 {icon}
                             </span>
                         )}
-                        <span className="font-bold text-sm tracking-tight">{symbol}</span>
+                        <span className="font-black text-sm tracking-[0.1em] uppercase italic text-white">{symbol}</span>
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

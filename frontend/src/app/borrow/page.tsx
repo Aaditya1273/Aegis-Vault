@@ -3,16 +3,19 @@
 import React, { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import { depositCollateral } from "@/lib/stacks";
-import StatBox from "@/components/ui/StatBox";
-import ProgressBar from "@/components/ui/ProgressBar";
+import Button from "@/components/ui/Button";
+import { useBalances } from "@/hooks/useBalances";
+import { useVaultData } from "@/hooks/useVaultData";
 import { mintaeUSD } from "@/lib/stacks";
 
 export default function BorrowPage() {
     const [amount, setAmount] = useState("50,000.00");
+    const { stats } = useVaultData();
+    const { sbtcBalance } = useBalances();
+
+    const collateralValue = stats ? (stats.collateral / 100000000) * 64500 : 142904.22;
+    const currentDebt = stats ? stats.debt / 1000000 : 0;
 
     return (
         <div className="flex bg-surface min-h-screen">
@@ -71,12 +74,12 @@ export default function BorrowPage() {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-on-surface-variant">Collateral Value</span>
-                                            <span className="font-bold tabular-nums">$142,904.22</span>
+                                            <span className="font-bold tabular-nums">${collateralValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                         </div>
                                         <div className="h-[1px] bg-outline-variant/10 w-full" />
                                         <div className="flex justify-between items-center">
                                             <span className="text-sm font-bold text-primary">New Debt Balance</span>
-                                            <span className="text-xl font-black tabular-nums text-primary-container">${amount}</span>
+                                            <span className="text-xl font-black tabular-nums text-primary-container">${(currentDebt + parseFloat(amount.replace(/,/g, '')) || 0).toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </Card>
@@ -135,31 +138,16 @@ export default function BorrowPage() {
                                                 <span className="material-symbols-outlined text-secondary-fixed">account_balance_wallet</span>
                                                 <span className="text-on-surface-variant text-sm font-medium">Wallet Balance</span>
                                             </div>
-                                            <span className="text-lg font-bold tabular-nums text-on-surface">0.64 sBTC</span>
+                                            <span className="text-lg font-bold tabular-nums text-on-surface">{sbtcBalance.toFixed(4)} sBTC</span>
                                         </div>
                                     </div>
                                     <div className="mt-10 p-4 bg-secondary-container/5 rounded-xl border border-secondary-container/20">
                                         <div className="flex gap-3">
                                             <span className="material-symbols-outlined text-secondary-fixed shrink-0 text-sm">info</span>
                                             <p className="text-[11px] font-medium leading-relaxed text-on-secondary-container">
-                                                The Aegis Auto-Repayment feature uses 15% of your yield generated in the Vault to gradually pay down your aeUSD debt, lowering your liquidation risk automatically over time.
+                                                The Aegis Auto-Repayment feature uses 15% of your yield generated in the Vault to gradually pay down your aeUSD debt.
                                             </p>
                                         </div>
-                                    </div>
-                                </Card>
-
-                                {/* Protocol Health */}
-                                <Card className="p-8 flex items-center justify-between" variant="lowest">
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-outline">Protocol Health</h3>
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex -space-x-2">
-                                            {[1, 2, 3].map(i => (
-                                                <div key={i} className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-[14px]">verified_user</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <span className="text-[10px] font-black text-tertiary-container px-3 py-1 bg-tertiary-container/10 rounded-full uppercase tracking-widest">Audited</span>
                                     </div>
                                 </Card>
 

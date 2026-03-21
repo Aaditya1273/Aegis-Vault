@@ -6,20 +6,21 @@ export const useAutoRepay = (initialDebt: number) => {
     const [debt, setDebt] = useState(initialDebt);
 
     useEffect(() => {
+        setDebt(initialDebt);
         const interval = setInterval(() => {
-            // Simulate real-time auto-repayment (e.g. $0.14 per hour -> $0.0000388 per second)
-            setDebt((prev) => Math.max(0, prev - 0.0000388));
+            setDebt((prev) => Math.max(0, prev - 0.000001));
         }, 1000);
-
         return () => clearInterval(interval);
-    }, []);
+    }, [initialDebt]);
 
-    const formattedDebt = debt.toFixed(2);
-    const decimals = (debt % 1).toFixed(4).split(".")[1];
+    const debtStr = debt.toLocaleString(undefined, {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6,
+    });
 
-    return {
-        debt,
-        formattedDebt,
-        decimals,
-    };
+    const parts = debtStr.split(".");
+    const integerPart = parts[0];
+    const decimalPart = "." + (parts[1] || "000000");
+
+    return { debt, integerPart, decimalPart };
 };

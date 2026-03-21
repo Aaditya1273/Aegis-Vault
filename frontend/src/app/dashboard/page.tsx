@@ -8,10 +8,22 @@ import Card from "@/components/ui/Card";
 import ProgressBar from "@/components/ui/ProgressBar";
 import Button from "@/components/ui/Button";
 import { useAutoRepay } from "@/hooks/useAutoRepay";
+import { useVaultData } from "@/hooks/useVaultData";
+import { useBalances } from "@/hooks/useBalances";
 import Link from "next/link";
 
 export default function DashboardPage() {
-    const { formattedDebt, decimals } = useAutoRepay(4438.32);
+    const { stats } = useVaultData();
+    const { sbtcBalance, aeusdBalance } = useBalances();
+
+    const collateralValue = stats ? (stats.collateral / 100000000) * 64500 : 142904.22;
+    const debtValue = stats ? stats.debt / 1000000 : 9842.30;
+
+    const { integerPart, decimalPart } = useAutoRepay(debtValue);
+
+    const healthFactor = stats && stats.debt > 0
+        ? (collateralValue / debtValue).toFixed(2)
+        : "2.85";
 
     return (
         <div className="flex bg-surface min-h-screen">
@@ -19,22 +31,20 @@ export default function DashboardPage() {
             <div className="flex-1 flex flex-col min-w-0">
                 <Navbar />
                 <main className="p-8 mt-16 overflow-y-auto w-full">
-                    <div className="max-w-6xl mx-auto space-y-8">
+                    <div className="max-w-7xl mx-auto space-y-8">
                         {/* Page Header */}
                         <div className="flex justify-between items-end">
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-outline headline-font mb-1">
-                                    Institutional Dashboard
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-outline mb-2">Institutional Overview</p>
                                 <h1 className="text-4xl font-extrabold headline-font tracking-tight text-on-surface">
-                                    Portfolio Overview
+                                    Vault Analytics
                                 </h1>
                             </div>
                             <div className="text-right hidden sm:block">
-                                <p className="text-xs text-outline mb-1 font-bold">Connected Network</p>
-                                <div className="flex items-center gap-2 text-sm font-semibold text-tertiary-fixed-dim">
-                                    <span className="w-2 h-2 rounded-full bg-tertiary-fixed-dim shadow-[0_0_8px_currentColor]" />
-                                    Mainnet Authority
+                                <p className="text-xs text-outline mb-1 font-bold italic uppercase tracking-widest">Network Status</p>
+                                <div className="flex items-center gap-2 justify-end">
+                                    <span className="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+                                    <span className="text-sm font-bold text-on-surface italic">Stacks Testnet</span>
                                 </div>
                             </div>
                         </div>
@@ -42,141 +52,149 @@ export default function DashboardPage() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <StatBox
-                                label="Total Portfolio Value"
-                                value="$42,850.50"
-                                trend={{ value: "+2.4%", isUp: true }}
-                                assetLabel="BTC + aeUSD"
+                                label="Total Position Value"
+                                value={`$${(collateralValue + (aeusdBalance * 1)).toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+                                trend="+12.4%"
+                                asset="Combined Assets"
                             />
                             <StatBox
-                                label="Collateral Locked"
-                                value="0.6482 sBTC"
-                                subValue="≈ $38,412.18 USD"
+                                label="sBTC Collateral"
+                                value={`${stats ? (stats.collateral / 100000000).toFixed(4) : sbtcBalance.toFixed(4)}`}
+                                asset="BTC"
+                                trend={`~$${collateralValue.toLocaleString()}`}
                             />
                             <StatBox
-                                label="Active Loan"
-                                value="4,438.32 aeUSD"
-                                subValue="Interest Rate: 0.00% (PoX-backed)"
+                                label="Active aeUSD Debt"
+                                value={`$${debtValue.toLocaleString()}`}
+                                trend="-0.04%"
+                                asset="Stablecoins"
                             />
                         </div>
 
-                        {/* Bento Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            {/* Repayment Area */}
-                            <div className="lg:col-span-8">
-                                <Card glass className="p-8 h-full">
-                                    <div className="flex justify-between items-start mb-8">
+                            {/* Main Content Area: Auto-repayment Visualization */}
+                            <div className="lg:col-span-8 space-y-6">
+                                <Card variant="high" glass className="p-10 relative overflow-hidden group min-h-[400px] flex flex-col justify-center">
+                                    <div className="absolute top-0 right-0 p-8">
+                                        <div className="w-20 h-20 rounded-full border border-primary-container/20 flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                                            <span className="material-symbols-outlined text-primary-container/20 text-4xl">restart_alt</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative z-10 text-center space-y-8">
                                         <div>
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/10 text-primary-container text-[10px] font-bold uppercase tracking-widest mb-4">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse" />
-                                                Live Strategy
-                                            </div>
-                                            <h3 className="text-2xl font-bold headline-font mb-2">
-                                                PoX Yield Auto-Repaying Debt
-                                            </h3>
-                                            <p className="text-on-surface-variant text-sm max-w-md">
-                                                Your sBTC collateral is earning Proof-of-Transfer rewards, used to pay down debt.
+                                            <p className="text-sm font-black text-primary-container uppercase tracking-[0.4em] mb-4 italic">
+                                                Real-Time Debt Reduction
                                             </p>
+                                            <div className="text-6xl md:text-8xl font-black headline-font tracking-tighter tabular-nums text-white">
+                                                ${integerPart}<span className="text-primary-container/40 italic">{decimalPart}</span>
+                                            </div>
+                                            <p className="text-outline font-bold mt-4 uppercase tracking-widest text-xs">Self-Repaying Principal</p>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-xs text-outline mb-1 uppercase tracking-tighter font-bold">
-                                                Current Debt
-                                            </p>
-                                            <div className="text-2xl md:text-3xl font-black headline-font tabular-nums text-primary-container">
-                                                ${formattedDebt}<span className="text-primary-container/40">{decimals}</span>
+
+                                        <div className="max-w-md mx-auto w-full space-y-4">
+                                            <div className="flex justify-between items-end">
+                                                <span className="text-xs font-bold text-outline italic uppercase tracking-widest">Repayment Progress</span>
+                                                <span className="text-sm font-black text-primary-container italic">7.42% Total</span>
+                                            </div>
+                                            <div className="h-4 w-full bg-surface-container-highest rounded-full p-1 border border-white/5 shadow-inner">
+                                                <div className="h-full bg-gradient-to-r from-primary-container to-secondary-container rounded-full w-[7.42%] shadow-[0_0_15px_rgba(0,245,255,0.4)]" />
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <ProgressBar
-                                        value={12.4}
-                                        label="Loan Repaid: 12.4%"
-                                        subLabel="Repaying $0.14 / hour"
-                                    />
-
-                                    {/* Chart Placeholder */}
-                                    <div className="mt-8 h-44 w-full relative">
-                                        <svg className="w-full h-full" viewBox="0 0 800 200">
-                                            <defs>
-                                                <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                                                    <stop offset="0%" stopColor="#00f5ff" stopOpacity="0.2" />
-                                                    <stop offset="100%" stopColor="#00f5ff" stopOpacity="0" />
-                                                </linearGradient>
-                                            </defs>
-                                            <path d="M0,150 Q100,140 200,160 T400,120 T600,80 T800,40 L800,200 L0,200 Z" fill="url(#chartGradient)" />
-                                            <path d="M0,150 Q100,140 200,160 T400,120 T600,80 T800,40" fill="none" stroke="#00f5ff" strokeWidth="3" strokeLinecap="round" />
-                                            <circle cx="800" cy="40" r="4" fill="#00f5ff" className="animate-pulse" />
-                                        </svg>
+                                        <div className="flex justify-center gap-8 pt-8">
+                                            <div className="text-center">
+                                                <p className="text-[10px] font-black text-outline uppercase tracking-widest mb-1 italic">Hourly Yield</p>
+                                                <p className="text-xl font-bold text-white tabular-nums">+$1.24</p>
+                                            </div>
+                                            <div className="w-[1px] h-10 bg-white/5" />
+                                            <div className="text-center">
+                                                <p className="text-[10px] font-black text-outline uppercase tracking-widest mb-1 italic">LTV Ratio</p>
+                                                <p className="text-xl font-bold text-white tabular-nums">34.2%</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </Card>
-                            </div>
 
-                            {/* Health Factor Area */}
-                            <div className="lg:col-span-4 space-y-6">
-                                <Card className="p-8 flex flex-col items-center text-center">
-                                    <p className="text-xs font-bold text-outline uppercase tracking-widest mb-6">
-                                        Health Factor
-                                    </p>
-                                    <div className="relative w-40 h-40 flex items-center justify-center">
-                                        <svg className="w-full h-full -rotate-90">
-                                            <circle className="text-surface-container-lowest" cx="80" cy="80" r="65" fill="transparent" stroke="currentColor" strokeWidth="8" />
-                                            <circle className="text-tertiary-fixed-dim" cx="80" cy="80" r="65" fill="transparent" stroke="currentColor" strokeDasharray="408" strokeDashoffset="102" strokeWidth="8" strokeLinecap="round" />
-                                        </svg>
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="text-3xl font-black headline-font">1.85x</span>
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-tertiary-fixed-dim">Safe</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <Card className="p-8" variant="low">
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-outline mb-6 italic">Liquidation Guard</h3>
+                                        <div className="flex items-end justify-between">
+                                            <div>
+                                                <p className="text-xs text-on-surface-variant font-medium mb-1">Current Multiplier</p>
+                                                <p className="text-3xl font-black text-white headline-font tracking-tighter">1.52x</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-bold text-tertiary-fixed-dim uppercase tracking-widest mb-1 italic">Status</p>
+                                                <div className="px-3 py-1 rounded-full bg-tertiary-fixed-dim/10 border border-tertiary-fixed-dim/20">
+                                                    <span className="text-xs font-black text-tertiary-fixed-dim italic uppercase tracking-tighter">Deep Margin</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <p className="text-[11px] text-outline mt-6 font-medium leading-relaxed">
-                                        Liquidation risk occurs at 1.10x. Your collateral position is robust.
-                                    </p>
-                                </Card>
-
-                                <div className="grid grid-cols-1 gap-4">
-                                    <Link href="/deposit">
-                                        <Button variant="secondary" className="w-full">
-                                            <span className="material-symbols-outlined text-primary-container">add_circle</span>
-                                            Deposit BTC
-                                        </Button>
-                                    </Link>
-                                    <Link href="/borrow">
-                                        <Button variant="primary" className="w-full">
-                                            <span className="material-symbols-outlined">payments</span>
-                                            Mint aeUSD
-                                        </Button>
-                                    </Link>
+                                    </Card>
+                                    <Card className="p-8" variant="low">
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-outline mb-6 italic">Protocol Health</h3>
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between text-xs font-bold text-on-surface-variant uppercase tracking-widest italic">
+                                                <span>Efficiency</span>
+                                                <span className="text-white">99.8%</span>
+                                            </div>
+                                            <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                                                <div className="h-full bg-primary-container w-[99.8%]" />
+                                            </div>
+                                            <p className="text-[10px] text-outline font-medium">Clarity smart contracts fully verified on-chain.</p>
+                                        </div>
+                                    </Card>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Performance History */}
-                        <Card className="overflow-hidden">
-                            <div className="px-8 py-6 border-b border-outline-variant/10 flex justify-between items-center">
-                                <h4 className="font-bold headline-font">Yield Performance History</h4>
-                                <button className="text-[11px] font-bold text-primary-container uppercase tracking-widest">View Full Report</button>
-                            </div>
-                            <div className="divide-y divide-outline-variant/5">
-                                {[
-                                    { name: "PoX Cycle #74 Distribution", date: "Mar 24, 2024", icon: "auto_graph", amount: "+$12.42", color: "text-tertiary-container" },
-                                    { name: "Collateral Rebalancing", date: "Mar 22, 2024", icon: "database", amount: "0.00 sBTC", color: "text-on-surface" },
-                                ].map((row) => (
-                                    <div key={row.name} className="px-8 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-primary-container text-xl">{row.icon}</span>
-                                            </div>
+                            {/* Sidebar: Quick Actions & Risk Overview */}
+                            <div className="lg:col-span-4 space-y-6">
+                                <Card variant="high" className="p-8 border-primary-container/10">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-outline mb-8 italic">Institutional Actions</h3>
+                                    <div className="space-y-4">
+                                        <Link href="/deposit" className="block w-full">
+                                            <Button variant="primary" className="w-full justify-between group h-14" size="lg">
+                                                <span>Deposit BTC</span>
+                                                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                            </Button>
+                                        </Link>
+                                        <Link href="/borrow" className="block w-full">
+                                            <Button variant="outline" className="w-full justify-between group h-14" size="lg">
+                                                <span>Mint aeUSD</span>
+                                                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">bolt</span>
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </Card>
+
+                                <Card className="p-8" variant="low">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-outline mb-8 italic">Risk Visualizer</h3>
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-end">
                                             <div>
-                                                <p className="text-sm font-bold">{row.name}</p>
-                                                <p className="text-xs text-outline">{row.date}</p>
+                                                <p className="text-[10px] font-bold text-outline uppercase tracking-widest mb-1 italic">Safety Score</p>
+                                                <p className="text-4xl font-black text-on-surface headline-font tracking-tighter">{healthFactor}</p>
                                             </div>
+                                            <div className="w-12 h-12 rounded-full border-4 border-tertiary-fixed-dim border-t-transparent animate-[spin_3s_linear_infinite]" />
                                         </div>
-                                        <div className="text-right">
-                                            <p className={`text-sm font-bold ${row.color}`}>{row.amount}</p>
-                                            <p className="text-[10px] text-outline uppercase font-bold">Status: Fixed</p>
+                                        <p className="text-xs text-on-surface-variant leading-relaxed font-medium">
+                                            Your collateral is currently <span className="text-white font-bold italic">Safe</span>. The next yield adjustment will occur in 24 minutes.
+                                        </p>
+                                        <div className="pt-4 border-t border-white/5 space-y-3">
+                                            <div className="flex justify-between text-[10px] font-bold text-outline uppercase tracking-[0.2em] italic">
+                                                <span>Balance</span>
+                                                <span>{aeusdBalance.toFixed(2)} aeUSD</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px] font-bold text-outline uppercase tracking-[0.2em] italic">
+                                                <span>Collateral</span>
+                                                <span>{stats ? (stats.collateral / 100000000).toFixed(4) : sbtcBalance.toFixed(4)} sBTC</span>
+                                            </div>
                                         </div>
                                     </div>
-                                ))}
+                                </Card>
                             </div>
-                        </Card>
+                        </div>
                     </div>
                 </main>
             </div>
