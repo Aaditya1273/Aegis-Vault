@@ -14,10 +14,8 @@ export const useVaultData = () => {
 
     const fetchStats = async () => {
         if (!userSession.isUserSignedIn()) return;
-
         const userData = userSession.loadUserData();
         const stxAddress = userData?.profile?.stxAddress?.testnet || userData?.profile?.stxAddress?.mainnet;
-
         if (!stxAddress) return;
 
         setLoading(true);
@@ -33,7 +31,6 @@ export const useVaultData = () => {
 
     useEffect(() => {
         fetchStats();
-        // Refresh every 30 seconds
         const interval = setInterval(fetchStats, 30000);
         return () => clearInterval(interval);
     }, []);

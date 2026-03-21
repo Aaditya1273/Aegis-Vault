@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import AuthGuard from "@/components/layout/AuthGuard";
 import AtmosphericLayer from "@/components/ui/AtmosphericLayer";
 import OrbWidget from "@/components/ui/OrbWidget";
 import SmoothScroll from "@/components/layout/SmoothScroll";
+import { StacksProvider } from "@/components/providers/StacksProvider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -29,7 +29,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="dark" suppressHydrationWarning>
+        <html lang="en" className="dark relative" suppressHydrationWarning>
             <head>
                 <link
                     rel="stylesheet"
@@ -37,17 +37,17 @@ export default function RootLayout({
                 />
             </head>
             <body
-                className={`${plusJakartaSans.variable} ${inter.variable} antialiased bg-surface text-on-surface`}
+                className={`${plusJakartaSans.variable} ${inter.variable} antialiased bg-black relative min-h-screen text-on-surface`}
                 suppressHydrationWarning
             >
-                <AuthGuard>
+                <StacksProvider>
                     <SmoothScroll>
                         <div className="noise-overlay" />
                         <AtmosphericLayer />
                         {children}
                         <OrbWidget />
                     </SmoothScroll>
-                </AuthGuard>
+                </StacksProvider>
             </body>
         </html>
     );

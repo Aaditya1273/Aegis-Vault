@@ -2,8 +2,10 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useStacksWallet } from "@/hooks/useStacksWallet";
+import { useStacks } from "@/components/providers/StacksProvider";
 import Button from "@/components/ui/Button";
 import ScribbleUnderline from "@/components/ui/ScribbleUnderline";
 import LogoLoop from "@/components/ui/LogoLoop";
@@ -42,7 +44,24 @@ const AceternityLogo = () => {
 
 export default function LandingPage() {
     const { connectWallet, isSignedIn } = useStacksWallet();
+    const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Redirect to dashboard as soon as wallet connects
+    const { isRestoring } = useStacks();
+    React.useEffect(() => {
+        if (!isRestoring && isSignedIn) {
+            router.replace("/dashboard");
+        }
+    }, [isRestoring, isSignedIn, router]);
+
+    const handleCTA = () => {
+        if (isSignedIn) {
+            router.replace("/dashboard");
+        } else {
+            connectWallet();
+        }
+    };
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -77,7 +96,7 @@ export default function LandingPage() {
 
                     <div className="flex items-center gap-4 border-l border-white/10 pl-10 ml-auto lg:ml-0">
                         <button
-                            onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}
+                            onClick={handleCTA}
                             className="px-6 py-2 bg-[#FF9D00] text-black text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-white hover:text-black transition-all shadow-xl shadow-[#FF9D00]/20 active:scale-95"
                         >
                             {isSignedIn ? "Dashboard" : "Start Vault"}
@@ -119,7 +138,7 @@ export default function LandingPage() {
                                 transition={{ duration: 0.8, delay: 0.8 }}
                                 className="flex flex-wrap gap-8 items-center"
                             >
-                                <Button size="lg" variant="primary" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
+                                <Button size="lg" variant="primary" onClick={handleCTA}>
                                     <AceternityLogo />
                                     <span>{isSignedIn ? "Open Dashboard" : "Start Vault"}</span>
                                 </Button>
@@ -197,13 +216,13 @@ export default function LandingPage() {
                                 transition={{ duration: 0.6, delay: idx * 0.2 }}
                                 className="glass-panel p-12 rounded-[3rem] h-full border border-white/5 flex flex-col items-center text-center group hover:border-[#FF9D00]/20 transition-all duration-500 hover:bg-[#FF9D00]/5"
                             >
-                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#FF9D00] to-[#FF5C00] flex items-center justify-center text-white font-black text-2xl mb-10 shadow-xl shadow-[#FF9D00]/20 italic group-hover:scale-110 transition-transform group-hover:rotate-3">
+                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#FF9D00] to-[#FF5C00] flex items-center justify-center text-white font-black text-2xl mb-10 shadow-xl shadow-[#FF9D00]/20 group-hover:scale-110 transition-transform group-hover:rotate-3">
                                     {item.step}
                                 </div>
-                                <h3 className="text-3xl font-bold font-headline mb-6 text-white uppercase italic">{item.title}</h3>
+                                <h3 className="text-3xl font-bold font-headline mb-6 text-white uppercase">{item.title}</h3>
                                 <p className="text-slate-400 mb-12 text-lg leading-relaxed">{item.desc}</p>
                                 <div className="w-full bg-black/40 p-8 rounded-[2rem] border border-white/5 group-hover:border-[#FF9D00]/10 transition-colors">
-                                    <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                                         <span className="flex items-center gap-2">Vault Active</span>
                                         <span className="text-white">{item.asset}</span>
                                     </div>
@@ -299,7 +318,7 @@ export default function LandingPage() {
                                     <div className="w-12 h-12 rounded-xl bg-[#FF9D00]/10 flex items-center justify-center text-[#FF9D00] mb-8">
                                         {item.icon}
                                     </div>
-                                    <h4 className="text-xl font-black font-headline text-white mb-4 uppercase italic">{item.title}</h4>
+                                    <h4 className="text-xl font-black font-headline text-white mb-4 uppercase">{item.title}</h4>
                                     <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                                 </motion.div>
                             ))}
@@ -338,7 +357,7 @@ export default function LandingPage() {
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-20 mb-32">
                             <div className="col-span-2">
                                 <div className="flex items-center gap-3 mb-10">
-                                    <span className="text-3xl font-black tracking-tighter text-white font-headline italic">AEGIS VAULT</span>
+                                    <span className="text-3xl font-black tracking-tighter text-white font-headline">AEGIS VAULT</span>
                                 </div>
                                 <p className="text-slate-500 max-w-sm text-lg leading-relaxed font-medium mb-10">
                                     The world's first Bitcoin-native yield protocol. Institutional-grade vaults designed for the digital sovereign.
@@ -349,7 +368,7 @@ export default function LandingPage() {
                             </div>
 
                             <div className="space-y-8">
-                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black italic">Pages</h5>
+                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black">Pages</h5>
                                 <ul className="space-y-4">
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#solutions">Solutions</a></li>
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#institutional">Institutional</a></li>
@@ -359,7 +378,7 @@ export default function LandingPage() {
                             </div>
 
                             <div className="space-y-8">
-                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black italic">Socials</h5>
+                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black">Socials</h5>
                                 <ul className="space-y-4">
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#">X / Twitter</a></li>
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#">Telegram</a></li>
@@ -369,7 +388,7 @@ export default function LandingPage() {
                             </div>
 
                             <div className="space-y-8">
-                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black italic">Legal</h5>
+                                <h5 className="text-[#FF9D00] font-headline text-[10px] uppercase tracking-[0.5em] font-black">Legal</h5>
                                 <ul className="space-y-4">
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#">Privacy Policy</a></li>
                                     <li><a className="text-slate-500 hover:text-white transition-all text-sm font-bold tracking-tight" href="#">Terms of Service</a></li>
@@ -385,7 +404,7 @@ export default function LandingPage() {
                                 <SiPolygon className="w-8 h-8 text-white" />
                                 <SiBinance className="w-8 h-8 text-white" />
                             </div>
-                            <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.6em] italic">
+                            <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.6em]">
                                 Built on Stacks Layer 2 • Secured by Bitcoin
                             </div>
                         </div>

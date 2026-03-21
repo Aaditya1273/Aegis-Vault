@@ -58,7 +58,7 @@ const Sidebar = () => {
 
             <div className="p-6">
                 {!isSignedIn ? (
-                    <Button variant="primary" className="w-full" onClick={connectWallet}>
+                    <Button variant="primary" className="w-full" onClick={() => connectWallet()}>
                         CONNECT WALLET
                     </Button>
                 ) : (

@@ -1,26 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { useStacksWallet } from "@/hooks/useStacksWallet";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useStacks } from "@/components/providers/StacksProvider";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-    const { isSignedIn } = useStacksWallet();
     const router = useRouter();
-    const pathname = usePathname();
-    const [isReady, setIsReady] = useState(false);
+    const { isRestoring, isSignedIn } = useStacks();
 
     useEffect(() => {
-        // If we're on a non-public route and not signed in, redirect
-        const publicRoutes = ["/", "/landing"];
-        if (!isSignedIn && !publicRoutes.includes(pathname)) {
-            router.push("/");
-        } else {
-            setIsReady(true);
+        if (!isRestoring && !isSignedIn) {
+            router.replace("/");
         }
-    }, [isSignedIn, pathname, router]);
+    }, [isRestoring, isSignedIn, router]);
 
-    if (!isReady) return null; // Or a loading spinner
+    if (isRestoring) {
+        return (
+            <div className="bg-black min-h-screen flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-[#FF9D00] border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (!isSignedIn) return null;
 
     return <>{children}</>;
 }

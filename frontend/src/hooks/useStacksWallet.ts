@@ -1,24 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { userSession, login, logout } from "@/lib/stacks";
+import { useStacks } from "@/components/providers/StacksProvider";
 
 export const useStacksWallet = () => {
-    const [userData, setUserData] = useState<any>(null);
-
-    useEffect(() => {
-        if (userSession.isUserSignedIn()) {
-            setUserData(userSession.loadUserData());
-        }
-    }, []);
-
-    const stxAddress = userData?.profile?.stxAddress?.testnet || userData?.profile?.stxAddress?.mainnet;
+    const { isSignedIn, stxAddress, connectWallet, disconnectWallet } = useStacks();
 
     return {
-        userData,
         stxAddress,
-        connectWallet: login,
-        disconnectWallet: logout,
-        isSignedIn: userSession.isUserSignedIn(),
+        connectWallet,
+        disconnectWallet,
+        isSignedIn,
     };
 };
