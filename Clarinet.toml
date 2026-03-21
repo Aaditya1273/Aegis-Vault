@@ -8,18 +8,17 @@ cache_dir = "./.cache"
 [[project.requirements]]
 contract_id = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token"
 
-[contracts.aeusd]
-path = "contracts/aeusd.clar"
-clarity_version = 2
-epoch = "latest"
+[[project.requirements]]
+contract_id = "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.sip-010-v1"
 
-[contracts.vault]
+[[project.requirements]]
+contract_id = "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2"
+
+[[project.requirements]]
+contract_id = "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.oracle-v2"
+
+[contracts.vault-v2]
 path = "contracts/vault.clar"
-clarity_version = 2
-epoch = "latest"
-
-[contracts.oracle]
-path = "contracts/oracle.clar"
 clarity_version = 2
 epoch = "latest"
 

@@ -34,24 +34,34 @@ plan:
     epoch: '3.0'
   - id: 1
     transactions:
-    - transaction-type: contract-publish
-      contract-name: aeusd
-      expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
-      cost: 21410
-      path: contracts/aeusd.clar
-      anchor-block-only: true
+    - transaction-type: requirement-publish
+      contract-id: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.sip-010-v1
+      remap-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+      remap-principals:
+        ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+      cost: 4370
+      path: .cache/requirements/ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.sip-010-v1.clar
       clarity-version: 2
-    - transaction-type: contract-publish
-      contract-name: oracle
-      expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+    - transaction-type: requirement-publish
+      contract-id: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2
+      remap-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+      remap-principals:
+        ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+      cost: 20470
+      path: .cache/requirements/ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2.clar
+      clarity-version: 2
+    - transaction-type: requirement-publish
+      contract-id: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.oracle-v2
+      remap-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+      remap-principals:
+        ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
       cost: 9100
-      path: contracts/oracle.clar
-      anchor-block-only: true
+      path: .cache/requirements/ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.oracle-v2.clar
       clarity-version: 2
     - transaction-type: contract-publish
-      contract-name: vault
+      contract-name: vault-v2
       expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
-      cost: 72230
+      cost: 4027273
       path: contracts/vault.clar
       anchor-block-only: true
       clarity-version: 2

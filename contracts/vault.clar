@@ -2,12 +2,12 @@
 ;; Handles sBTC collateral and aeUSD minting.
 
 ;; Traits
-(use-trait sbtc-trait 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token.sbtc-token-trait)
+(use-trait sbtc-trait 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.sip-010-v1.sip-010-trait)
 
 ;; Constants
-(define-constant contract-owner tx-sender)
+(define-constant contract-owner 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY)
 (define-constant sbtc-token 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
-(define-constant aeusd-token .aeusd)
+(define-constant aeusd-token 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2)
 
 ;; Errors
 (define-constant err-owner-only (err u100))
@@ -39,13 +39,13 @@
 
 ;; Use the Oracle contract for real-time pricing
 (define-read-only (get-sbtc-price)
-    (contract-call? .oracle get-price)
+    (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.oracle-v2 get-price)
 )
 
 (define-read-only (calculate-health-factor (user principal))
     (let (
         (vault (get-vault user))
-        (price (unwrap-panic (get-sbtc-price)))
+        (price (unwrap! (get-sbtc-price) u0))
         (collateral-value (/ (* (get collateral vault) price) u100000000))
     )
         (if (is-eq (get debt vault) u0)
@@ -57,7 +57,7 @@
 
 (define-read-only (calculate-max-mint (collateral uint))
     (let (
-        (price (unwrap-panic (get-sbtc-price)))
+        (price (unwrap! (get-sbtc-price) u0))
         (collateral-value (/ (* collateral price) u100000000))
     )
     (/ (* collateral-value ltv-ratio) u100)
@@ -97,7 +97,7 @@
         (asserts! (<= new-debt max-mint) err-insufficient-collateral)
         
         ;; Mint aeUSD to user
-        (try! (contract-call? .aeusd mint amount tx-sender))
+        (try! (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2 mint amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -118,7 +118,7 @@
         (asserts! (> actual-repay u0) err-invalid-amount)
         
         ;; Burn aeUSD from user
-        (try! (contract-call? .aeusd burn actual-repay tx-sender))
+        (try! (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2 burn actual-repay tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {

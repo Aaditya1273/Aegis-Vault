@@ -39,7 +39,7 @@ const createSafeUserSession = (): UserSession => {
 export const userSession = createSafeUserSession();
 
 // Network Configuration
-export const NETWORK = createNetwork("devnet"); // Switch to "mainnet" or "testnet" for production
+export const NETWORK = createNetwork((process.env.NEXT_PUBLIC_STACKS_NETWORK as any) || "testnet");
 export const SUBNET_URL = "http://localhost:18443";
 export const IS_SUBNET = process.env.NEXT_PUBLIC_IS_SUBNET === "true";
 
@@ -47,9 +47,9 @@ export const EFFECTIVE_NETWORK = IS_SUBNET
     ? createNetwork({ network: "devnet", client: { baseUrl: SUBNET_URL } })
     : NETWORK;
 
-export const CONTRACT_ADDRESS = "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
-export const VAULT_CONTRACT = "vault";
-export const AEUSD_CONTRACT = "aeusd";
+export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
+export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "vault-v2";
+export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aeusd-v2";
 
 /**
  * Fetches vault statistics for a given owner.
@@ -107,7 +107,7 @@ export const depositCollateral = async (amount: number) => {
         network: EFFECTIVE_NETWORK,
         contractAddress: CONTRACT_ADDRESS,
         contractName: VAULT_CONTRACT,
-        functionName: "deposit-sbtc",
+        functionName: "deposit-collateral",
         functionArgs: [Cl.uint(amount)],
         postConditions: [],
         onFinish: (data) => {

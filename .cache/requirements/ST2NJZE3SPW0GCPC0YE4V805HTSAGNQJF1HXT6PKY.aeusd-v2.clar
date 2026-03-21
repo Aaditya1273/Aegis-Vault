@@ -17,7 +17,7 @@
 (define-data-var token-decimals uint u6)
 
 ;; Authorization: Only the Vault contract can mint/burn
-(define-data-var vault-contract principal 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.vault-v2)
+(define-data-var vault-contract principal .vault-v2)
 
 ;; --- SIP-010 Functions ---
 
