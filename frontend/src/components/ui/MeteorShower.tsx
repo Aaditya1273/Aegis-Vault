@@ -3,6 +3,12 @@
 import React, { useMemo } from 'react';
 
 export default function MeteorShower() {
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const meteors = useMemo(() => Array.from({ length: 12 }).map((_, i) => ({
         id: i,
         left: `${Math.random() * 100}%`,
@@ -10,6 +16,8 @@ export default function MeteorShower() {
         delay: `${Math.random() * 10}s`,
         duration: `${5 + Math.random() * 5}s`,
     })), []);
+
+    if (!mounted) return null;
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">

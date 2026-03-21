@@ -8,8 +8,13 @@ const icons = [
 ];
 
 export default function LogoField() {
+    const [mounted, setMounted] = React.useState(false);
     const mouseX = useMotionValue<number>(0);
     const mouseY = useMotionValue<number>(0);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleMouseMove = (e: React.MouseEvent) => {
         const { clientX, clientY } = e;
@@ -24,7 +29,10 @@ export default function LogoField() {
         icon: icons[i % icons.length],
         scale: 0.5 + Math.random(),
         rotation: Math.random() * 360,
+        duration: 5 + Math.random() * 5
     })), []);
+
+    if (!mounted) return null;
 
     return (
         <div onMouseMove={handleMouseMove} className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
@@ -71,15 +79,15 @@ function LogoIcon({ logo, mouseX, mouseY }: {
                 top: `${logo.initialY}%`,
                 scale: logo.scale,
                 rotate: logo.rotation,
-                x: repelX,
-                y: repelY
+                x: repelX as any,
+                y: repelY as any
             }}
             animate={{
                 y: [0, -20, 0],
-                rotate: [logo.rotation, logo.rotation + 10, logo.rotation]
+                rotate: [logo.rotation as number, (logo.rotation as number) + 10, logo.rotation as number]
             }}
             transition={{
-                duration: 5 + Math.random() * 5,
+                duration: logo.duration,
                 repeat: Infinity,
                 ease: "easeInOut"
             }}

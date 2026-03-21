@@ -1,7 +1,6 @@
 import {
     AppConfig,
-    UserSession,
-    showConnect
+    UserSession
 } from "@stacks/connect";
 import {
     createNetwork
@@ -75,12 +74,14 @@ export const getVaultStats = async (ownerAddress: string) => {
 /**
  * Initiates the wallet connection flow.
  */
-export const login = () => {
+export const login = async () => {
+    const { showConnect } = await import("@stacks/connect");
     showConnect({
         appDetails: {
             name: "Aegis-Vault",
-            icon: "https://your-app-icon.com/logo.png",
+            icon: window.location.origin + "/logo.png",
         },
+        redirectTo: "/",
         onFinish: () => {
             window.location.reload();
         },

@@ -17,7 +17,8 @@ export default function ConnectWallet() {
     if (!mounted) return null;
 
     if (userSession.isUserSignedIn()) {
-        const address = userData?.profile?.stxAddress?.mainnet || userData?.profile?.stxAddress?.testnet;
+        const profile = userData?.profile;
+        const address = profile?.stxAddress?.testnet || profile?.stxAddress?.mainnet || "Unknown Address";
         return (
             <div className="flex items-center gap-4">
                 <div className="hidden lg:flex flex-col items-end">
