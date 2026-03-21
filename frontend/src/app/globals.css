@@ -1,49 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-    --color-surface-variant: #353436;
-    --color-on-primary-fixed: #002021;
-    --color-surface-container-high: #2a2a2b;
-    --color-tertiary: #eafff0;
-    --color-outline: #849495;
-    --color-surface-tint: #00dce5;
-    --color-inverse-on-surface: #313031;
-    --color-primary: #e9feff;
-    --color-on-primary: #003739;
-    --color-surface-container-low: #1c1b1c;
-    --color-surface-container-highest: #353436;
-    --color-background: #131314;
-    --color-on-primary-fixed-variant: #004f53;
-    --color-tertiary-container: #69f6b9;
-    --color-on-tertiary-fixed: #002113;
-    --color-surface: #131314;
-    --color-on-secondary-fixed-variant: #5516be;
-    --color-primary-fixed: #63f7ff;
-    --color-on-primary-container: #006c71;
-    --color-on-secondary-fixed: #23005c;
+    --color-surface-variant: #353435;
+    --color-on-primary-fixed: #211000;
+    --color-surface-container-high: #2b2a2a;
+    --color-tertiary: #fffbe9;
+    --color-outline: #958c84;
+    --color-surface-tint: #ff8a00;
+    --color-inverse-on-surface: #313030;
+    --color-primary: #fff8e9;
+    --color-on-primary: #391c00;
+    --color-surface-container-low: #1c1b1b;
+    --color-surface-container-highest: #363434;
+    --color-background: #141313;
+    --color-on-primary-fixed-variant: #532800;
+    --color-tertiary-container: #f6e669;
+    --color-on-tertiary-fixed: #211c00;
+    --color-surface: #141313;
+    --color-on-secondary-fixed-variant: #be4816;
+    --color-primary-fixed: #ffc263;
+    --color-on-primary-container: #713800;
+    --color-on-secondary-fixed: #5c2200;
     --color-error-container: #93000a;
-    --color-inverse-primary: #00696e;
-    --color-primary-container: #00f5ff;
-    --color-on-tertiary: #003824;
-    --color-inverse-surface: #e5e2e3;
-    --color-on-secondary: #3c0091;
-    --color-on-surface-variant: #b9caca;
-    --color-on-background: #e5e2e3;
-    --color-secondary-container: #571bc1;
-    --color-on-tertiary-container: #006f4c;
-    --color-secondary-fixed-dim: #d0bcff;
-    --color-secondary: #d0bcff;
+    --color-inverse-primary: #6e3600;
+    --color-primary-container: #ff9d00;
+    --color-on-tertiary: #382d00;
+    --color-inverse-surface: #e5e2e2;
+    --color-on-secondary: #913a00;
+    --color-on-surface-variant: #cab9b9;
+    --color-on-background: #e5e2e2;
+    --color-secondary-container: #c15b1b;
+    --color-on-tertiary-container: #6f5d00;
+    --color-secondary-fixed-dim: #ffbcbc;
+    --color-secondary: #ffbcbc;
     --color-on-error-container: #ffdad6;
-    --color-surface-container: #201f20;
-    --color-surface-container-lowest: #0e0e0f;
-    --color-outline-variant: #3a494a;
-    --color-primary-fixed-dim: #00dce5;
-    --color-on-secondary-container: #c4abff;
+    --color-surface-container: #201f1f;
+    --color-surface-container-lowest: #0f0e0e;
+    --color-outline-variant: #4a403a;
+    --color-primary-fixed-dim: #ff8a00;
+    --color-on-secondary-container: #ffcab5;
     --color-on-error: #690005;
-    --color-tertiary-fixed: #6ffbbe;
-    --color-tertiary-fixed-dim: #4edea3;
-    --color-secondary-fixed: #e9ddff;
-    --color-on-tertiary-fixed-variant: #005236;
+    --color-tertiary-fixed: #fbf06f;
+    --color-tertiary-fixed-dim: #ded34e;
+    --color-secondary-fixed: #ffe9dd;
+    --color-on-tertiary-fixed-variant: #524400;
     --color-error: #ffb4ab;
     --color-surface-bright: #3a393a;
     --color-surface-dim: #131314;
@@ -120,11 +120,11 @@
     }
 
     .aegis-glow {
-        box-shadow: 0 4px 40px rgba(0, 245, 255, 0.15);
+        box-shadow: 0 4px 40px rgba(255, 140, 0, 0.15);
     }
 
     .aegis-glow:hover {
-        box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
     }
 
     .tabular-nums {
@@ -133,6 +133,22 @@
 
     .tonal-transition {
         background: linear-gradient(180deg, rgba(28, 27, 28, 1) 0%, rgba(19, 19, 20, 0) 100%);
+    }
+
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+
+    .rotate-y-5 {
+        transform: rotateY(5deg);
+    }
+
+    .rotate-y--5 {
+        transform: rotateY(-5deg);
+    }
+
+    .rotate-x-5 {
+        transform: rotateX(5deg);
     }
 }
 

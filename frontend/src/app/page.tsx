@@ -5,23 +5,55 @@ import Link from "next/link";
 import { useStacksWallet } from "@/hooks/useStacksWallet";
 import Button from "@/components/ui/Button";
 import ScribbleUnderline from "@/components/ui/ScribbleUnderline";
+import LogoLoop from "@/components/ui/LogoLoop";
+import { SiBitcoin, SiEthereum, SiSolana, SiPolygon, SiBinance, SiCoinbase } from "react-icons/si";
 
-export default function LandingPage() {
+const ecosystemLogos = [
+    { node: <SiBitcoin />, title: "Bitcoin", href: "https://bitcoin.org" },
+    { node: <SiPolygon />, title: "Polygon", href: "https://polygon.technology" },
+    { node: <SiEthereum />, title: "Ethereum", href: "https://ethereum.org" },
+    { node: <SiSolana />, title: "Solana", href: "https://solana.com" },
+    { node: <SiBinance />, title: "Binance", href: "https://binance.com" },
+    { node: <SiCoinbase />, title: "Coinbase", href: "https://coinbase.com" },
+];
+
+const AceternityLogo = () => {
+    return (
+        <svg
+            width="66"
+            height="65"
+            viewBox="0 0 66 65"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-3 w-3 text-white"
+        >
+            <path
+                d="M8 8.05571C8 8.05571 54.9009 18.1782 57.8687 30.062C60.8365 41.9458 9.05432 57.4696 9.05432 57.4696"
+                stroke="currentColor"
+                strokeWidth="15"
+                strokeMiterlimit="3.86874"
+                strokeLinecap="round"
+            />
+        </svg>
+    );
+};
+
+const LandingPage: React.FC = () => {
     const { connectWallet, isSignedIn } = useStacksWallet();
 
     return (
-        <div className="bg-surface text-on-surface selection:bg-primary-container/30 min-h-screen">
+        <div className="relative min-h-screen bg-surface text-on-surface selection:bg-primary-container/30 overflow-hidden">
             {/* TopNavBar */}
-            <nav className="fixed top-0 w-full z-50 bg-[#131314]/80 backdrop-blur-xl border-b border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
+            <nav className="fixed top-0 inset-x-0 z-50 bg-[#131314]/80 backdrop-blur-xl border-b border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
                 <div className="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
                     <div className="text-2xl font-bold tracking-tighter text-white font-headline italic">
                         AEGIS VAULT
                     </div>
                     <div className="hidden md:flex items-center gap-10">
-                        <a className="text-[#00F5FF] font-semibold font-headline tracking-tight hover:text-[#00F5FF] transition-colors duration-300" href="#solutions">Solutions</a>
-                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#00F5FF] transition-colors duration-300" href="#institutional">Institutional</a>
-                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#00F5FF] transition-colors duration-300" href="#security">Security</a>
-                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#00F5FF] transition-colors duration-300" href="#governance">Governance</a>
+                        <a className="text-[#FF9D00] font-semibold font-headline tracking-tight hover:text-[#FF9D00] transition-colors duration-300" href="#solutions">Solutions</a>
+                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#FF9D00] transition-colors duration-300" href="#institutional">Institutional</a>
+                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#FF9D00] transition-colors duration-300" href="#security">Security</a>
+                        <a className="text-slate-400 font-medium font-headline tracking-tight hover:text-[#FF9D00] transition-colors duration-300" href="#governance">Governance</a>
                     </div>
                     <Button variant="primary" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
                         {isSignedIn ? "Dashboard" : "Connect Wallet"}
@@ -29,65 +61,74 @@ export default function LandingPage() {
                 </div>
             </nav>
 
-            <main className="pt-32">
+            <main className="pt-40">
                 {/* Section 1: Hero */}
-                <section className="max-w-screen-2xl mx-auto px-8 mb-32 relative">
-                    <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-container/10 blur-[120px] rounded-full"></div>
-                    <div className="absolute top-20 -right-20 w-[500px] h-[500px] bg-secondary-container/10 blur-[150px] rounded-full"></div>
-                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <section className="max-w-[1800px] mx-auto px-12 mb-48 relative min-h-[70vh] flex items-center">
+                    <div className="absolute -top-60 -left-60 w-[600px] h-[600px] bg-primary-container/10 blur-[160px] rounded-full"></div>
+                    <div className="absolute top-40 -right-40 w-[700px] h-[700px] bg-secondary-container/10 blur-[180px] rounded-full"></div>
+
+                    <div className="grid lg:grid-cols-2 gap-24 items-center w-full">
                         <div className="z-10">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-white/5 mb-6">
-                                <span className="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
-                                <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Bitcoin Native Yield Now Live</span>
+                            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface-container-high/50 backdrop-blur-md border border-white/5 mb-10">
+                                <span className="w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_10px_#FF9D00]"></span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant">Bitcoin Native Yield Now Live</span>
                             </div>
-                            <h1 className="text-6xl md:text-7xl font-black font-headline leading-[1.1] mb-8 tracking-tighter text-white">
-                                Bitcoin That <ScribbleUnderline className="text-primary-container">Pays Your Loans Back</ScribbleUnderline>
+                            <h1 className="text-7xl md:text-9xl font-black font-headline leading-[0.95] mb-12 tracking-tighter text-white uppercase">
+                                Bitcoin That <br />
+                                <ScribbleUnderline className="text-primary-container">Pays Your Loans Back</ScribbleUnderline>
                             </h1>
-                            <p className="text-xl text-on-surface-variant leading-relaxed mb-10 max-w-xl">
+                            <p className="text-2xl text-on-surface-variant leading-relaxed mb-14 max-w-2xl font-medium">
                                 Mint aeUSD against your BTC — and let your loan repay itself automatically using Bitcoin-native yield. No liquidations. No monthly payments. No tax events.
                             </p>
-                            <div className="flex flex-wrap gap-4">
-                                <Button size="lg" variant="primary" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
-                                    {isSignedIn ? "Open Dashboard" : "Start Vault"}
+                            <div className="flex flex-wrap gap-8 items-center">
+                                <Button size="xl" variant="primary" className="px-12 py-6 text-lg" onClick={isSignedIn ? () => window.location.href = '/dashboard' : connectWallet}>
+                                    <AceternityLogo />
+                                    <span>{isSignedIn ? "Open Dashboard" : "Start Vault"}</span>
                                 </Button>
-                                <Button size="lg" variant="outline">Institutional Demo</Button>
+                                <Button size="xl" variant="outline" className="px-12 py-6 text-lg">
+                                    <AceternityLogo />
+                                    <span>Institutional Demo</span>
+                                </Button>
                             </div>
                         </div>
-                        <div className="relative group">
-                            <div className="glass-panel p-8 rounded-lg shadow-2xl relative z-10 border border-white/5 transition-transform group-hover:scale-[1.02] duration-500">
-                                <div className="flex justify-between items-center mb-10">
+
+                        <div className="relative group perspective-1000">
+                            <div className="glass-panel p-12 rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative z-10 border border-white/10 transition-all duration-700 group-hover:rotate-y-[-5deg] group-hover:rotate-x-[5deg] group-hover:scale-[1.05] bg-surface/40 backdrop-blur-3xl">
+                                <div className="flex justify-between items-center mb-14">
                                     <div>
-                                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Active Loan Balance</p>
-                                        <h3 className="text-4xl font-headline font-bold tabular-nums text-white">$9,842.30</h3>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-3">Active Loan Balance</p>
+                                        <h3 className="text-6xl font-headline font-black tabular-nums text-white tracking-tighter">$9,842.30</h3>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Total Yield Generated</p>
-                                        <h3 className="text-2xl font-headline font-bold tabular-nums text-primary-container">+$157.70</h3>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-3">Yield Generated</p>
+                                        <h3 className="text-3xl font-headline font-black tabular-nums text-primary-container tracking-tighter">+$157.70</h3>
                                     </div>
                                 </div>
-                                <div className="space-y-6">
-                                    <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                                        <div className="h-full bg-gradient-to-r from-primary-container to-secondary-container w-[72%]"></div>
+                                <div className="space-y-8">
+                                    <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden p-[2px] border border-white/5">
+                                        <div className="h-full bg-gradient-to-r from-primary-container via-[#FF9D00] to-secondary-container rounded-full w-[72%] shadow-[0_0_20px_rgba(255,157,0,0.4)]"></div>
                                     </div>
-                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                    <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
                                         <span>Origination: $10,000</span>
                                         <span>Goal: $0.00</span>
                                     </div>
                                 </div>
-                                <div className="mt-12 pt-8 border-t border-white/5">
-                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-surface-container-lowest animate-pulse">
-                                        <div className="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-primary-container">trending_down</span>
+                                <div className="mt-16 pt-12 border-t border-white/10">
+                                    <div className="flex items-center gap-6 p-6 rounded-2xl bg-surface-container-lowest/50 backdrop-blur-xl border border-white/5 shadow-inner">
+                                        <div className="w-14 h-14 rounded-full bg-primary-container/20 flex items-center justify-center border border-primary-container/30">
+                                            <span className="material-symbols-outlined text-primary-container scale-125">trending_down</span>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-white">Automated Repayment Success</p>
-                                            <p className="text-xs text-slate-500">Yield harvest from PoX successfully applied to principal.</p>
+                                            <p className="text-base font-black text-white tracking-tight">Auto-Repayment Success</p>
+                                            <p className="text-xs text-slate-400 font-medium tracking-wide">Yield harvest from PoX applied to principal.</p>
                                         </div>
-                                        <div className="ml-auto text-xs font-bold text-tertiary-fixed-dim">Just now</div>
+                                        <div className="ml-auto text-[10px] font-black text-tertiary-fixed-dim uppercase tracking-widest animate-pulse">Live</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="absolute -bottom-6 -right-6 w-full h-full border border-white/5 rounded-lg -z-10 transition-transform group-hover:translate-x-3 group-hover:translate-y-3 duration-500"></div>
+                            {/* Decorative elements to expand the view */}
+                            <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary-container/20 rounded-full blur-[100px] mix-blend-screen animate-pulse"></div>
+                            <div className="absolute -bottom-12 -left-12 w-80 h-80 bg-secondary-container/10 rounded-full blur-[120px] mix-blend-screen animate-pulse delay-1000"></div>
                         </div>
                     </div>
                 </section>
@@ -141,8 +182,8 @@ export default function LandingPage() {
                                     <span>Vault Assets</span>
                                     <span className="text-white">0.45 BTC</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-surface-container rounded-full">
-                                    <div className="h-full bg-primary-container w-full shadow-[0_0_8px_#00F5FF]"></div>
+                                <div className="h-1.5 w-full bg-surface-container rounded-full relative overflow-hidden">
+                                    <div className="h-full bg-primary-container w-full shadow-[0_0_8px_#FF9D00]"></div>
                                 </div>
                             </div>
                         </div>
@@ -182,7 +223,30 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                {/* Section 4: Security */}
+                {/* Section 4: Ecosystem */}
+                <section className="py-24 border-y border-white/5 bg-surface-container-lowest/50 backdrop-blur-sm">
+                    <div className="max-w-screen-2xl mx-auto px-8">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+                            <div className="max-w-sm">
+                                <h3 className="text-xl font-bold font-headline text-white mb-2 italic">Institutional Backing</h3>
+                                <p className="text-sm text-slate-500 font-medium">Powering the next generation of Bitcoin native credit markets with global ecosystem partners.</p>
+                            </div>
+                            <div className="flex-1 w-full overflow-hidden">
+                                <LogoLoop
+                                    logos={ecosystemLogos}
+                                    speed={40}
+                                    logoHeight={40}
+                                    gap={80}
+                                    fadeOut
+                                    fadeOutColor="transparent"
+                                    scaleOnHover
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Section 5: Security */}
                 <section id="security" className="py-40 bg-gradient-to-b from-surface to-surface-container-lowest relative overflow-hidden">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-container/5 blur-[200px] rounded-full -z-10"></div>
                     <div className="max-w-screen-2xl mx-auto px-8 text-center">
@@ -231,31 +295,31 @@ export default function LandingPage() {
                         </p>
                     </div>
                     <div className="space-y-6">
-                        <h5 className="text-[#00F5FF] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Solutions</h5>
+                        <h5 className="text-[#FF9D00] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Solutions</h5>
                         <ul className="space-y-4">
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Bitcoin Liquidity</a></li>
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Yield Strategy</a></li>
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Governance</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Bitcoin Liquidity</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Yield Strategy</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Governance</a></li>
                         </ul>
                     </div>
                     <div className="space-y-6">
-                        <h5 className="text-[#00F5FF] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Company</h5>
+                        <h5 className="text-[#FF9D00] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Company</h5>
                         <ul className="space-y-4">
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Institutional Support</a></li>
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Privacy Framework</a></li>
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Terms & Compliance</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Institutional Support</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Privacy Framework</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Terms & Compliance</a></li>
                         </ul>
                     </div>
                     <div className="space-y-6">
-                        <h5 className="text-[#00F5FF] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Connect</h5>
+                        <h5 className="text-[#FF9D00] font-headline text-sm uppercase tracking-[0.3em] font-black italic">Connect</h5>
                         <ul className="space-y-4">
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">X / Twitter</a></li>
-                            <li><a className="text-slate-500 hover:text-[#00F5FF] transition-all text-base font-medium" href="#">Institutional Discord</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">X / Twitter</a></li>
+                            <li><a className="text-slate-500 hover:text-[#FF9D00] transition-all text-base font-medium" href="#">Institutional Discord</a></li>
                         </ul>
                     </div>
                 </div>
                 <div className="max-w-screen-2xl mx-auto px-12 mt-32 pt-12 border-t border-white/5 flex justify-between items-center">
-                    <p className="text-xs uppercase tracking-[0.4em] text-slate-500 font-black italic">© 2024 Aegis Vault. The Digital Sovereign.</p>
+                    <p className="text-xs uppercase tracking-[0.4em] text-slate-500 font-black italic">© 2026 Aegis Vault. The Digital Sovereign.</p>
                     <div className="flex gap-4">
                         <div className="w-10 h-10 rounded-xl bg-surface-container-high border border-white/5 flex items-center justify-center opacity-50">
                             <span className="material-symbols-outlined text-xs">shield</span>
@@ -268,4 +332,6 @@ export default function LandingPage() {
             </footer>
         </div>
     );
-}
+};
+
+export default LandingPage;

@@ -28,20 +28,20 @@ export default function OrbWidget() {
                         {state === "idle" && (
                             <motion.div
                                 key="idle"
-                                initial={{ scale: 0, opacity: 0 }}
+                                initial={{ scale: 0, opacity: 0, background: "radial-gradient(circle, #FF9D00, #FF5C00)", boxShadow: "0 0 30px #FF9D00" }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0, opacity: 0 }}
-                                className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-container/20 to-primary-container shadow-[0_0_20px_#00F5FF33]"
+                                className="w-8 h-8 rounded-full"
                             />
                         )}
                         {state === "listening" && (
                             <motion.div
                                 key="listening"
                                 initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: [1, 1.2, 1], opacity: 1 }}
+                                animate={{ scale: [1, 1.2, 1], opacity: 1, boxShadow: "0 0 60px rgba(255, 157, 0, 0.4)", border: "1px solid rgba(255, 157, 0, 0.5)" }}
                                 exit={{ scale: 0, opacity: 0 }}
                                 transition={{ repeat: Infinity, duration: 1.5 }}
-                                className="w-8 h-8 rounded-full bg-gradient-to-tr from-secondary-container to-secondary-container-high shadow-[0_0_20px_#571BC144]"
+                                className="w-8 h-8 rounded-full bg-gradient-to-tr from-secondary-container to-secondary-container-high"
                             >
                                 <div className="absolute inset-0 rounded-full border border-white/20 animate-ping" />
                             </motion.div>
