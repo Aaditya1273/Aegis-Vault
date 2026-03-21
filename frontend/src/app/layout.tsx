@@ -1,43 +1,37 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import FloatingOrb from "@/components/ui/FloatingOrb";
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+    subsets: ["latin"],
+    variable: "--font-inter",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const plusJakartaSans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    variable: "--font-plus-jakarta-sans",
 });
 
 export const metadata: Metadata = {
-  title: "Aegis-Vault | Self-Repaying Bitcoin Loans",
-  description: "Mint aeUSD against sBTC collateral. Loans that pay themselves back using PoX rewards.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+    title: "Aegis Vault | Institutional Web3 Banking",
+    description: "High-fidelity PoX-backed Bitcoin collateralized loans.",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={`${inter.className} dark bg-[#020202] text-foreground antialiased selection:bg-primary/30 min-h-screen relative`}>
-        <div className="fixed inset-0 grid-background z-0 pointer-events-none" />
-        <div className="fixed inset-0 noise-overlay z-[100] pointer-events-none" />
-        <Navbar />
-        <div className="relative z-10">
-          {children}
-        </div>
-        <FloatingOrb />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" className="dark">
+            <head>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" />
+            </head>
+            <body
+                className={`${inter.variable} ${plusJakartaSans.variable} antialiased`}
+            >
+                {children}
+            </body>
+        </html>
+    );
 }
