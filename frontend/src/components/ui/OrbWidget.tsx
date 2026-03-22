@@ -21,7 +21,7 @@ export default function OrbWidget() {
     }, []);
 
     return (
-        <div className="fixed bottom-8 right-8 z-[100]">
+        <div className="fixed bottom-8 left-8 lg:left-72 z-[100]">
             <div className="glass-panel p-2 rounded-full border border-white/10 shadow-2xl backdrop-blur-3xl overflow-hidden flex items-center gap-4 pr-6 bg-surface/50">
                 <div className="relative w-12 h-12 flex items-center justify-center">
                     <AnimatePresence mode="wait">

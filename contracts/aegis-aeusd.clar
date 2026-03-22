@@ -1,7 +1,4 @@
-;; aeUSD Stablecoin (SIP-010)
-;; The stablecoin for the Aegis-Vault protocol.
-
-(impl-trait .sip-010-v1.sip-010-trait)
+(impl-trait .aegis-sip10-v3.sip-010-trait)
 
 (define-fungible-token aeusd)
 
@@ -17,7 +14,7 @@
 (define-data-var token-decimals uint u6)
 
 ;; Authorization: Only the Vault contract can mint/burn
-(define-data-var vault-contract principal 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.vault-v2)
+(define-data-var vault-contract (optional principal) none)
 
 ;; --- SIP-010 Functions ---
 
@@ -56,14 +53,14 @@
 
 (define-public (mint (amount uint) (recipient principal))
     (begin
-        (asserts! (is-eq tx-sender (var-get vault-contract)) err-not-authorized)
+        (asserts! (is-eq (some tx-sender) (var-get vault-contract)) err-not-authorized)
         (ft-mint? aeusd amount recipient)
     )
 )
 
 (define-public (burn (amount uint) (owner principal))
     (begin
-        (asserts! (is-eq tx-sender (var-get vault-contract)) err-not-authorized)
+        (asserts! (is-eq (some tx-sender) (var-get vault-contract)) err-not-authorized)
         (ft-burn? aeusd amount owner)
     )
 )
@@ -72,7 +69,7 @@
 (define-public (set-vault-contract (new-vault principal))
     (begin
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
-        (var-set vault-contract new-vault)
+        (var-set vault-contract (some new-vault))
         (ok true)
     )
 )

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchCallReadOnlyFunction, cvToJSON, Cl } from "@stacks/transactions";
-import { userSession, EFFECTIVE_NETWORK, CONTRACT_ADDRESS, AEUSD_CONTRACT } from "@/lib/stacks";
+import { userSession, EFFECTIVE_NETWORK, CONTRACT_ADDRESS, AEUSD_CONTRACT, BTC_TESTNET_CONTRACT } from "@/lib/stacks";
 
 const HIRO_API = "https://api.testnet.hiro.so";
 // sBTC on testnet (SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
@@ -11,6 +11,7 @@ const SBTC_CONTRACT = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token";
 export const useBalances = () => {
     const [sbtcBalance, setSbtcBalance] = useState<number>(0);
     const [aeusdBalance, setAeusdBalance] = useState<number>(0);
+    const [btcTestnetBalance, setBtcTestnetBalance] = useState<number>(0);
     const [stxBalance, setStxBalance] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
@@ -22,18 +23,18 @@ export const useBalances = () => {
 
         setLoading(true);
         try {
-            // Fetch all balances from Hiro API in one call
+            // Fetch all balances from Hiro API
             const res = await window.fetch(`${HIRO_API}/v1/address/${stxAddress}/balances`);
             const data = await res.json();
 
-            // STX balance (in microSTX → STX)
+            // STX balance
             setStxBalance(Number(data?.stx?.balance ?? 0) / 1_000_000);
 
-            // sBTC balance from fungible tokens
+            // sBTC balance
             const sbtcEntry = data?.fungible_tokens?.[SBTC_CONTRACT];
             setSbtcBalance(Number(sbtcEntry?.balance ?? 0) / 1_00_000_000);
 
-            // aeUSD from on-chain read (our own contract)
+            // aeUSD balance
             const aeusdResult = await fetchCallReadOnlyFunction({
                 network: EFFECTIVE_NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
@@ -43,6 +44,22 @@ export const useBalances = () => {
                 senderAddress: stxAddress,
             });
             setAeusdBalance(Number(cvToJSON(aeusdResult)?.value?.value ?? 0) / 1_000_000);
+
+            // BTC Testnet balance (Mock)
+            try {
+                const btcResult = await fetchCallReadOnlyFunction({
+                    network: EFFECTIVE_NETWORK,
+                    contractAddress: CONTRACT_ADDRESS,
+                    contractName: BTC_TESTNET_CONTRACT, // Dynamic target for simulation
+                    functionName: "get-balance",
+                    functionArgs: [Cl.standardPrincipal(stxAddress)],
+                    senderAddress: stxAddress,
+                });
+                setBtcTestnetBalance(Number(cvToJSON(btcResult)?.value?.value ?? 0) / 1_00_000_000);
+            } catch (e) {
+                console.error("[Aegis:Balances] Mock BTC fetch failed:", e);
+                setBtcTestnetBalance(0);
+            }
         } catch (e) {
             console.error("Error fetching balances:", e);
         }
@@ -55,5 +72,5 @@ export const useBalances = () => {
         return () => clearInterval(interval);
     }, []);
 
-    return { sbtcBalance, aeusdBalance, stxBalance, loading, refresh: fetchBalances };
+    return { sbtcBalance, aeusdBalance, btcTestnetBalance, stxBalance, loading, refresh: fetchBalances };
 };

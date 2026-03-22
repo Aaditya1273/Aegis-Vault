@@ -16,14 +16,14 @@
 ;; In production, this would be triggered by PoX reward distribution
 (define-public (harvest-yield (user principal))
     (let (
-        (vault (contract-call? .vault get-vault user))
+        (vault (contract-call? .aegis-vault-v4 get-vault user))
         (debt (get debt vault))
         (repay-amount (/ (* debt (var-get repayment-percentage)) u100))
     )
         (asserts! (> debt u0) err-no-yield)
         
         ;; Trigger repayment in the vault
-        (try! (contract-call? .vault protocol-repay user repay-amount))
+        (try! (contract-call? .aegis-vault-v4 protocol-repay user repay-amount))
         
         ;; Update global stats
         (var-set total-yield-harvested (+ (var-get total-yield-harvested) repay-amount))

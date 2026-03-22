@@ -5,6 +5,8 @@ import AtmosphericLayer from "@/components/ui/AtmosphericLayer";
 import OrbWidget from "@/components/ui/OrbWidget";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import { StacksProvider } from "@/components/providers/StacksProvider";
+import { TransactionProvider } from "@/context/TransactionContext";
+import TransactionToast from "@/components/ui/TransactionToast";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -41,12 +43,15 @@ export default function RootLayout({
                 suppressHydrationWarning
             >
                 <StacksProvider>
-                    <SmoothScroll>
-                        <div className="noise-overlay" />
-                        <AtmosphericLayer />
-                        {children}
-                        <OrbWidget />
-                    </SmoothScroll>
+                    <TransactionProvider>
+                        <SmoothScroll>
+                            <div className="noise-overlay" />
+                            <AtmosphericLayer />
+                            {children}
+                            <OrbWidget />
+                            <TransactionToast />
+                        </SmoothScroll>
+                    </TransactionProvider>
                 </StacksProvider>
             </body>
         </html>

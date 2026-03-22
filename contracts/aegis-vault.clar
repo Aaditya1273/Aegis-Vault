@@ -1,15 +1,8 @@
-;; Aegis-Vault: Core Vault Contract
-;; Handles sBTC collateral and aeUSD minting.
-
 ;; Traits
-(use-trait sbtc-trait 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.sip-010-v1.sip-010-trait)
+(use-trait sip-010-trait .aegis-sip10-v3.sip-010-trait)
 
 ;; Constants
-(define-constant contract-owner 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY)
-(define-constant sbtc-token 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
-(define-constant aeusd-token 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2)
-
-;; Errors
+(define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u100))
 (define-constant err-insufficient-collateral (err u101))
 (define-constant err-unhealthy-position (err u102))
@@ -20,6 +13,10 @@
 ;; Protocol Parameters
 (define-constant ltv-ratio u70) ;; 70% Loan-to-Value
 (define-constant liquidation-threshold u80) ;; 80% Liquidation threshold
+
+;; Configurable Dependencies
+(define-data-var sbtc-token principal 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
+(define-data-var yield-engine (optional principal) none)
 
 ;; Data Maps
 (define-map vaults
@@ -37,44 +34,45 @@
     (default-to { collateral: u0, debt: u0, last-block: u0 } (map-get? vaults { user: user }))
 )
 
-;; Use the Oracle contract for real-time pricing
-(define-read-only (get-sbtc-price)
-    (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.oracle-v2 get-price)
+;; Use the local Oracle contract for real-time pricing
+(define-public (get-sbtc-price)
+    (contract-call? .aegis-oracle-v3 get-price)
 )
 
-(define-read-only (calculate-health-factor (user principal))
+(define-public (calculate-health-factor (user principal))
     (let (
         (vault (get-vault user))
-        (price (unwrap! (get-sbtc-price) u0))
+        (price (unwrap! (get-sbtc-price) (ok u0)))
         (collateral-value (/ (* (get collateral vault) price) u100000000))
     )
         (if (is-eq (get debt vault) u0)
-            u1000 ;; Infinite health if no debt
-            (/ (* collateral-value u100) (get debt vault))
+            (ok u1000) ;; Infinite health if no debt
+            (ok (/ (* collateral-value u100) (get debt vault)))
         )
     )
 )
 
-(define-read-only (calculate-max-mint (collateral uint))
+(define-public (calculate-max-mint (collateral uint))
     (let (
-        (price (unwrap! (get-sbtc-price) u0))
+        (price (unwrap! (get-sbtc-price) (ok u0)))
         (collateral-value (/ (* collateral price) u100000000))
     )
-    (/ (* collateral-value ltv-ratio) u100)
+    (ok (/ (* collateral-value ltv-ratio) u100))
     )
 )
 
 ;; --- Public Functions ---
 
 ;; 1. Deposit Collateral
-(define-public (deposit-collateral (amount uint))
+(define-public (deposit-collateral (amount uint) (token <sip-010-trait>))
     (let (
         (current-vault (get-vault tx-sender))
     )
+        (asserts! (is-eq (contract-of token) (var-get sbtc-token)) err-not-authorized)
         (asserts! (> amount u0) err-invalid-amount)
         
         ;; Transfer sBTC to vault
-        (try! (contract-call? 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token transfer amount tx-sender (as-contract tx-sender) none))
+        (try! (contract-call? token transfer amount tx-sender (as-contract tx-sender) none))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -91,13 +89,13 @@
     (let (
         (current-vault (get-vault tx-sender))
         (new-debt (+ (get debt current-vault) amount))
-        (max-mint (calculate-max-mint (get collateral current-vault)))
+        (max-mint (unwrap-panic (calculate-max-mint (get collateral current-vault))))
     )
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (<= new-debt max-mint) err-insufficient-collateral)
         
-        ;; Mint aeUSD to user
-        (try! (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2 mint amount tx-sender))
+        ;; Mint aeUSD to user using local contract reference
+        (try! (contract-call? .aegis-aeusd-v3 mint amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -109,40 +107,20 @@
     )
 )
 
-;; 3. Repay aeUSD (Burn)
-(define-public (repay-aeusd (amount uint))
-    (let (
-        (current-vault (get-vault tx-sender))
-        (actual-repay (if (> amount (get debt current-vault)) (get debt current-vault) amount))
-    )
-        (asserts! (> actual-repay u0) err-invalid-amount)
-        
-        ;; Burn aeUSD from user
-        (try! (contract-call? 'ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aeusd-v2 burn actual-repay tx-sender))
-        
-        ;; Update Vault
-        (map-set vaults { user: tx-sender } (merge current-vault {
-            debt: (- (get debt current-vault) actual-repay),
-            last-block: block-height
-        }))
-        
-        (ok true)
-    )
-)
-
-;; 4. Withdraw Collateral
-(define-public (withdraw-collateral (amount uint))
+;; 3. Withdraw Collateral
+(define-public (withdraw-collateral (amount uint) (token <sip-010-trait>))
     (let (
         (current-vault (get-vault tx-sender))
         (new-collateral (- (get collateral current-vault) amount))
-        (max-mint (calculate-max-mint new-collateral))
+        (max-mint (unwrap-panic (calculate-max-mint new-collateral)))
     )
+        (asserts! (is-eq (contract-of token) (var-get sbtc-token)) err-not-authorized)
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (>= (get collateral current-vault) amount) err-invalid-amount)
         (asserts! (>= max-mint (get debt current-vault)) err-unhealthy-position)
         
         ;; Transfer sBTC back to user
-        (try! (as-contract (contract-call? 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token transfer amount (as-contract tx-sender) tx-sender none)))
+        (try! (as-contract (contract-call? token transfer amount (as-contract tx-sender) tx-sender none)))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -182,14 +160,17 @@
     )
 )
 
-;; Protocol Repay (Still available for external authorized bots)
+;; Protocol Repay (Available for authorized yield-harvest bots or the auto-repay engine)
 (define-public (protocol-repay (user principal) (amount uint))
     (let (
         (current-vault (get-vault user))
         (actual-repay (if (> amount (get debt current-vault)) (get debt current-vault) amount))
     )
-        ;; Check authorization (only authorized bots/owners)
-        (asserts! (is-eq tx-sender contract-owner) err-not-authorized)
+        ;; Check authorization (Owner or authorized Yield Engine)
+        (asserts! (or 
+            (is-eq tx-sender contract-owner) 
+            (is-eq (some contract-caller) (var-get yield-engine))
+        ) err-not-authorized)
         
         ;; Update Vault debt
         (map-set vaults { user: user } (merge current-vault {
@@ -204,7 +185,7 @@
 ;; Auto-Deleverage Engine: Triggered if health factor drops below a threshold
 (define-public (auto-deleverage (user principal))
     (let (
-        (health-factor (calculate-health-factor user))
+        (health-factor (unwrap-panic (calculate-health-factor user)))
     )
         (asserts! (< health-factor liquidation-threshold) err-not-authorized)
         
@@ -213,11 +194,27 @@
     )
 )
 
-;; Admin Controls for Auto-Repay
+;; Admin Controls
 (define-public (set-repayment-percentage (new-percentage uint))
     (begin
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
         (var-set repayment-percentage new-percentage)
+        (ok true)
+    )
+)
+
+(define-public (set-yield-engine (new-engine principal))
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set yield-engine (some new-engine))
+        (ok true)
+    )
+)
+
+(define-public (update-sbtc-token (new-token principal))
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set sbtc-token new-token)
         (ok true)
     )
 )

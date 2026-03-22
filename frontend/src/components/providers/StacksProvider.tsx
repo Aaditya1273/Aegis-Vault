@@ -7,6 +7,8 @@ type StacksContextType = {
     isRestoring: boolean;
     isSignedIn: boolean;
     stxAddress: string | null;
+    btcAddress: string | null;
+    btcPublicKey: string | null;
     connectWallet: () => void;
     disconnectWallet: () => void;
 };
@@ -15,8 +17,10 @@ const StacksContext = createContext<StacksContextType>({
     isRestoring: true,
     isSignedIn: false,
     stxAddress: null,
-    connectWallet: () => {},
-    disconnectWallet: () => {},
+    btcAddress: null,
+    btcPublicKey: null,
+    connectWallet: () => { },
+    disconnectWallet: () => { },
 });
 
 export const useStacks = () => useContext(StacksContext);
@@ -25,15 +29,33 @@ export function StacksProvider({ children }: { children: React.ReactNode }) {
     const [isRestoring, setIsRestoring] = useState(true);
     const [isSignedIn, setIsSignedIn] = useState(false);
     const [stxAddress, setStxAddress] = useState<string | null>(null);
+    const [btcAddress, setBtcAddress] = useState<string | null>(null);
+    const [btcPublicKey, setBtcPublicKey] = useState<string | null>(null);
 
     const syncSession = useCallback(() => {
         try {
             const signedIn = userSession.isUserSignedIn();
             setIsSignedIn(signedIn);
-            setStxAddress(signedIn ? getAccountAddress() : null);
+
+            if (signedIn) {
+                const userData = userSession.loadUserData();
+                setStxAddress(getAccountAddress());
+
+                // Fetch BTC data if available in profile
+                const networkKey = process.env.NEXT_PUBLIC_STACKS_NETWORK === "mainnet" ? "mainnet" : "testnet";
+
+                setBtcAddress(userData.profile?.btcAddress?.[networkKey] || null);
+                setBtcPublicKey(userData.profile?.btcPublicKey?.[networkKey] || null);
+            } else {
+                setStxAddress(null);
+                setBtcAddress(null);
+                setBtcPublicKey(null);
+            }
         } catch {
             setIsSignedIn(false);
             setStxAddress(null);
+            setBtcAddress(null);
+            setBtcPublicKey(null);
         }
     }, []);
 
@@ -82,7 +104,15 @@ export function StacksProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <StacksContext.Provider value={{ isRestoring, isSignedIn, stxAddress, connectWallet, disconnectWallet }}>
+        <StacksContext.Provider value={{
+            isRestoring,
+            isSignedIn,
+            stxAddress,
+            btcAddress,
+            btcPublicKey,
+            connectWallet,
+            disconnectWallet
+        }}>
             {children}
         </StacksContext.Provider>
     );
