@@ -95,7 +95,7 @@
         (asserts! (<= new-debt max-mint) err-insufficient-collateral)
         
         ;; Mint aeUSD to user using local contract reference
-        (try! (contract-call? .aegis-aeusd-v3 mint amount tx-sender))
+        (try! (contract-call? .aegis-aeusd-v4 mint amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {

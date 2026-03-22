@@ -21,12 +21,24 @@ export const EFFECTIVE_NETWORK = isMainnet ? "mainnet" : "testnet";
 
 export const CONTRACT_ADDRESS =
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
-export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v4";
-export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v3";
-export const LP_TOKEN_CONTRACT = "aegis-lp-token-v3";
-export const POOL_CONTRACT = "aegis-pool-v10";
-export const SBTC_CONTRACT = process.env.NEXT_PUBLIC_SBTC_CONTRACT || "mock-btc-v4";
-export const BTC_TESTNET_CONTRACT = "mock-btc-v4";
+export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v5";
+export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v4";
+export const LP_TOKEN_CONTRACT = "aegis-lp-token-v4";
+export const POOL_CONTRACT = "aegis-pool-v7";
+export const SBTC_CONTRACT = process.env.NEXT_PUBLIC_SBTC_CONTRACT || "mock-btc-v5";
+export const BTC_TESTNET_CONTRACT = "mock-btc-v5";
+
+/**
+ * Safe Principal Parser to prevent Leather Wallet crashes
+ */
+export const parseContractPrincipal = (principal: string) => {
+    const full = principal.includes(".") ? principal : `${CONTRACT_ADDRESS}.${principal}`;
+    const parts = full.split(".");
+    if (parts.length !== 2 || !parts[0] || !parts[1]) {
+        throw new Error(`Invalid contract principal: ${principal}`);
+    }
+    return Cl.contractPrincipal(parts[0], parts[1]);
+};
 
 export const GET_SBTC_PRINCIPAL = () => {
     if (SBTC_CONTRACT.includes(".")) return SBTC_CONTRACT;
@@ -114,13 +126,12 @@ export const submitContractIntent = async (intent: ContractIntent) => {
  */
 export const depositCollateral = (amount: number) => {
     const microAmount = BigInt(Math.round(amount * 1e8));
-    const [addr, name] = (SBTC_CONTRACT.includes(".") ? SBTC_CONTRACT : `${CONTRACT_ADDRESS}.${SBTC_CONTRACT}`).split(".");
     return submitContractIntent({
         contractName: VAULT_CONTRACT,
         functionName: "deposit-collateral",
         functionArgs: [
             Cl.uint(microAmount),
-            Cl.contractPrincipal(addr, name)
+            parseContractPrincipal(SBTC_CONTRACT)
         ],
     });
 };
@@ -142,14 +153,13 @@ export const mintaeUSD = (amount: number) => {
  * Provision Liquidity to aeUSD/sBTC Pool
  */
 export const addLiquidity = (amountAeUSD: number, amountSBTC: number, sbtcToken: string) => {
-    const parts = sbtcToken.split(".");
     return submitContractIntent({
         contractName: POOL_CONTRACT,
         functionName: "add-liquidity",
         functionArgs: [
             Cl.uint(BigInt(Math.round(amountAeUSD * 1e6))),
             Cl.uint(BigInt(Math.round(amountSBTC * 1e8))),
-            Cl.contractPrincipal(parts[0], parts[1])
+            parseContractPrincipal(sbtcToken)
         ],
         postConditionMode: POST_CONDITION_ALLOW,
     });
@@ -171,14 +181,13 @@ export const claimTestnetBTC = () => {
  */
 export const toggleSimulationMode = (useMock: boolean) => {
     // 1. Update Vault
-    const [addr, name] = (SBTC_CONTRACT.includes(".") ? SBTC_CONTRACT : `${CONTRACT_ADDRESS}.${SBTC_CONTRACT}`).split(".");
     const vaultP = submitContractIntent({
         contractName: VAULT_CONTRACT,
         functionName: "update-sbtc-token",
         functionArgs: [
             useMock
                 ? Cl.contractPrincipal(CONTRACT_ADDRESS, BTC_TESTNET_CONTRACT)
-                : Cl.contractPrincipal(addr, name)
+                : parseContractPrincipal(SBTC_CONTRACT)
         ],
     });
 
@@ -208,13 +217,12 @@ export const depositTestnetBTC = (amount: number) => {
  * Remove Liquidity and Burn LP Tokens
  */
 export const removeLiquidity = (lpAmount: number, sbtcToken: string) => {
-    const parts = sbtcToken.split(".");
     return submitContractIntent({
         contractName: POOL_CONTRACT,
         functionName: "remove-liquidity",
         functionArgs: [
             Cl.uint(BigInt(Math.round(lpAmount * 1e6))),
-            Cl.contractPrincipal(parts[0], parts[1])
+            parseContractPrincipal(sbtcToken)
         ],
         postConditionMode: POST_CONDITION_ALLOW,
     });
@@ -224,13 +232,12 @@ export const removeLiquidity = (lpAmount: number, sbtcToken: string) => {
  * Swap aeUSD for sBTC
  */
 export const swapAEUSDforSBTC = (amountIn: number, sbtcToken: string) => {
-    const parts = sbtcToken.split(".");
     return submitContractIntent({
         contractName: POOL_CONTRACT,
         functionName: "swap-aeusd-for-sbtc",
         functionArgs: [
             Cl.uint(BigInt(Math.round(amountIn * 1e6))),
-            Cl.contractPrincipal(parts[0], parts[1])
+            parseContractPrincipal(sbtcToken)
         ],
         postConditionMode: POST_CONDITION_ALLOW,
     });
@@ -240,13 +247,12 @@ export const swapAEUSDforSBTC = (amountIn: number, sbtcToken: string) => {
  * Swap sBTC for aeUSD
  */
 export const swapSBTCforAEUSD = (amountIn: number, sbtcToken: string) => {
-    const parts = sbtcToken.split(".");
     return submitContractIntent({
         contractName: POOL_CONTRACT,
         functionName: "swap-sbtc-for-aeusd",
         functionArgs: [
             Cl.uint(BigInt(Math.round(amountIn * 1e8))),
-            Cl.contractPrincipal(parts[0], parts[1])
+            parseContractPrincipal(sbtcToken)
         ],
         postConditionMode: POST_CONDITION_ALLOW,
     });

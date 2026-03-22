@@ -11,9 +11,6 @@
 (define-constant err-invalid-amount (err u102))
 (define-constant err-math-overflow (err u103))
 
-;; Traits
-(use-trait sip-010-trait .aegis-sip10-v3.sip-010-trait)
-
 ;; State
 (define-data-var reserve-aeusd uint u0)
 (define-data-var reserve-sbtc uint u0)
@@ -46,7 +43,7 @@
 ;; 1. Add Liquidity
 (define-public (add-liquidity (amount-aeusd uint) (amount-sbtc uint) (sbtc-token <sip-010-trait>))
     (let (
-        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v3 get-total-supply)))
+        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v4 get-total-supply)))
         (reserves (get-reserves))
         (lp-to-mint 
             (if (is-eq total-lp u0)
@@ -62,12 +59,12 @@
     )
         (asserts! (and (> amount-aeusd u0) (> amount-sbtc u0)) err-invalid-amount)
         
-        (try! (contract-call? .aegis-aeusd-v3 transfer amount-aeusd tx-sender (as-contract tx-sender) none))
+        (try! (contract-call? .aegis-aeusd-v4 transfer amount-aeusd tx-sender (as-contract tx-sender) none))
         (try! (contract-call? sbtc-token transfer amount-sbtc tx-sender (as-contract tx-sender) none))
         
         (var-set reserve-aeusd (+ (get aeusd reserves) amount-aeusd))
         (var-set reserve-sbtc (+ (get sbtc reserves) amount-sbtc))
-        (try! (as-contract (contract-call? .aegis-lp-token-v3 mint lp-to-mint tx-sender)))
+        (try! (as-contract (contract-call? .aegis-lp-token-v4 mint lp-to-mint tx-sender)))
         (ok lp-to-mint)
     )
 )
@@ -75,7 +72,7 @@
 ;; 2. Remove Liquidity
 (define-public (remove-liquidity (lp-amount uint) (sbtc-token <sip-010-trait>))
     (let (
-        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v3 get-total-supply)))
+        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v4 get-total-supply)))
         (reserves (get-reserves))
         (share-aeusd (/ (* lp-amount (get aeusd reserves)) total-lp))
         (share-sbtc (/ (* lp-amount (get sbtc reserves)) total-lp))
@@ -83,8 +80,8 @@
         (asserts! (> lp-amount u0) err-invalid-amount)
         (asserts! (<= lp-amount total-lp) err-insufficient-liquidity)
         
-        (try! (contract-call? .aegis-lp-token-v3 burn lp-amount tx-sender))
-        (try! (as-contract (contract-call? .aegis-aeusd-v3 transfer share-aeusd (as-contract tx-sender) tx-sender none)))
+        (try! (contract-call? .aegis-lp-token-v4 burn lp-amount tx-sender))
+        (try! (as-contract (contract-call? .aegis-aeusd-v4 transfer share-aeusd (as-contract tx-sender) tx-sender none)))
         (try! (as-contract (contract-call? sbtc-token transfer share-sbtc (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-aeusd (- (get aeusd reserves) share-aeusd))
@@ -102,7 +99,7 @@
         (asserts! (> amount-in u0) err-invalid-amount)
         (asserts! (< amount-out (get sbtc reserves)) err-insufficient-liquidity)
         
-        (try! (contract-call? .aegis-aeusd-v3 transfer amount-in tx-sender (as-contract tx-sender) none))
+        (try! (contract-call? .aegis-aeusd-v4 transfer amount-in tx-sender (as-contract tx-sender) none))
         (try! (as-contract (contract-call? sbtc-token transfer amount-out (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-aeusd (+ (get aeusd reserves) amount-in))
@@ -121,10 +118,10 @@
         (asserts! (< amount-out (get aeusd reserves)) err-insufficient-liquidity)
         
         (try! (contract-call? sbtc-token transfer amount-in tx-sender (as-contract tx-sender) none))
-        (try! (as-contract (contract-call? .aegis-aeusd-v3 transfer amount-out (as-contract tx-sender) tx-sender none)))
+        (try! (as-contract (contract-call? .aegis-aeusd-v4 transfer amount-out (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-sbtc (+ (get sbtc reserves) amount-in))
-        (var-set reserve-aeusd (- (get reserve-aeusd) amount-out))
+        (var-set reserve-aeusd (- (var-get reserve-aeusd) amount-out))
         (ok amount-out)
     )
 )

@@ -53,14 +53,14 @@
 
 (define-public (mint (amount uint) (recipient principal))
     (begin
-        (asserts! (is-eq (some tx-sender) (var-get vault-contract)) err-not-authorized)
+        (asserts! (is-eq (some contract-caller) (var-get vault-contract)) err-not-authorized)
         (ft-mint? aeusd amount recipient)
     )
 )
 
 (define-public (burn (amount uint) (owner principal))
     (begin
-        (asserts! (is-eq (some tx-sender) (var-get vault-contract)) err-not-authorized)
+        (asserts! (is-eq (some contract-caller) (var-get vault-contract)) err-not-authorized)
         (ft-burn? aeusd amount owner)
     )
 )
