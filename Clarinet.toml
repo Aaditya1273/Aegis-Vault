@@ -19,7 +19,7 @@ path = "contracts/aegis-sip-010.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-aeusd-v4]
+[contracts.aegis-aeusd-v5]
 path = "contracts/aegis-aeusd.clar"
 clarity_version = 2
 epoch = "latest"
@@ -29,28 +29,28 @@ path = "contracts/aegis-oracle.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-vault-v5]
+[contracts.aegis-vault-v6]
 path = "contracts/aegis-vault.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-sip10-v3", "aegis-oracle-v3", "aegis-aeusd-v4"]
+depends_on = ["aegis-sip10-v3", "aegis-oracle-v3", "aegis-aeusd-v5"]
 
-[contracts.aegis-auto-repay-v5]
+[contracts.aegis-auto-repay-v6]
 path = "contracts/aegis-auto-repay.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-vault-v5"]
+depends_on = ["aegis-vault-v6"]
 
 [contracts.aegis-lp-token-v4]
 path = "contracts/aegis-lp-token.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-pool-v7]
+[contracts.aegis-pool-v8]
 path = "contracts/aegis-pool.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-sip10-v3", "aegis-aeusd-v4", "aegis-lp-token-v4"]
+depends_on = ["aegis-sip10-v3", "aegis-aeusd-v5", "aegis-lp-token-v4"]
 
 [contracts.mock-btc-v5]
 path = "contracts/mock-btc.clar"

@@ -59,7 +59,7 @@
     )
         (asserts! (and (> amount-aeusd u0) (> amount-sbtc u0)) err-invalid-amount)
         
-        (try! (contract-call? .aegis-aeusd-v4 transfer amount-aeusd tx-sender (as-contract tx-sender) none))
+        (try! (contract-call? .aegis-aeusd-v5 transfer amount-aeusd tx-sender (as-contract tx-sender) none))
         (try! (contract-call? sbtc-token transfer amount-sbtc tx-sender (as-contract tx-sender) none))
         
         (var-set reserve-aeusd (+ (get aeusd reserves) amount-aeusd))
@@ -81,7 +81,7 @@
         (asserts! (<= lp-amount total-lp) err-insufficient-liquidity)
         
         (try! (contract-call? .aegis-lp-token-v4 burn lp-amount tx-sender))
-        (try! (as-contract (contract-call? .aegis-aeusd-v4 transfer share-aeusd (as-contract tx-sender) tx-sender none)))
+        (try! (as-contract (contract-call? .aegis-aeusd-v5 transfer share-aeusd (as-contract tx-sender) tx-sender none)))
         (try! (as-contract (contract-call? sbtc-token transfer share-sbtc (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-aeusd (- (get aeusd reserves) share-aeusd))
@@ -99,7 +99,7 @@
         (asserts! (> amount-in u0) err-invalid-amount)
         (asserts! (< amount-out (get sbtc reserves)) err-insufficient-liquidity)
         
-        (try! (contract-call? .aegis-aeusd-v4 transfer amount-in tx-sender (as-contract tx-sender) none))
+        (try! (contract-call? .aegis-aeusd-v5 transfer amount-in tx-sender (as-contract tx-sender) none))
         (try! (as-contract (contract-call? sbtc-token transfer amount-out (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-aeusd (+ (get aeusd reserves) amount-in))
@@ -118,7 +118,7 @@
         (asserts! (< amount-out (get aeusd reserves)) err-insufficient-liquidity)
         
         (try! (contract-call? sbtc-token transfer amount-in tx-sender (as-contract tx-sender) none))
-        (try! (as-contract (contract-call? .aegis-aeusd-v4 transfer amount-out (as-contract tx-sender) tx-sender none)))
+        (try! (as-contract (contract-call? .aegis-aeusd-v5 transfer amount-out (as-contract tx-sender) tx-sender none)))
         
         (var-set reserve-sbtc (+ (get sbtc reserves) amount-in))
         (var-set reserve-aeusd (- (var-get reserve-aeusd) amount-out))

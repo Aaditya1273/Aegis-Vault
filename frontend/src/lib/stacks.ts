@@ -21,10 +21,10 @@ export const EFFECTIVE_NETWORK = isMainnet ? "mainnet" : "testnet";
 
 export const CONTRACT_ADDRESS =
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
-export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v5";
-export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v4";
+export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v6";
+export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v5";
 export const LP_TOKEN_CONTRACT = "aegis-lp-token-v4";
-export const POOL_CONTRACT = "aegis-pool-v7";
+export const POOL_CONTRACT = "aegis-pool-v8";
 export const SBTC_CONTRACT = process.env.NEXT_PUBLIC_SBTC_CONTRACT || "mock-btc-v5";
 export const BTC_TESTNET_CONTRACT = "mock-btc-v5";
 

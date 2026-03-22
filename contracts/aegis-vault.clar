@@ -15,7 +15,7 @@
 (define-constant liquidation-threshold u80) ;; 80% Liquidation threshold
 
 ;; Configurable Dependencies
-(define-data-var sbtc-token principal 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
+(define-data-var sbtc-token principal .mock-btc-v5)
 (define-data-var yield-engine (optional principal) none)
 
 ;; Data Maps
@@ -91,11 +91,12 @@
         (new-debt (+ (get debt current-vault) amount))
         (max-mint (unwrap-panic (calculate-max-mint (get collateral current-vault))))
     )
+    (begin
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (<= new-debt max-mint) err-insufficient-collateral)
         
         ;; Mint aeUSD to user using local contract reference
-        (try! (contract-call? .aegis-aeusd-v4 mint amount tx-sender))
+        (try! (contract-call? .aegis-aeusd-v5 mint amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -104,6 +105,30 @@
         }))
         
         (ok true)
+    )
+    )
+)
+
+;; 4. Repay aeUSD
+(define-public (repay-aeusd (amount uint))
+    (let (
+        (current-vault (get-vault tx-sender))
+        (actual-amount (if (> amount (get debt current-vault)) (get debt current-vault) amount))
+    )
+    (begin
+        (asserts! (> actual-amount u0) err-invalid-amount)
+        
+        ;; Burn aeUSD
+        (try! (contract-call? .aegis-aeusd-v5 burn actual-amount tx-sender))
+        
+        ;; Update Vault
+        (map-set vaults { user: tx-sender } (merge current-vault {
+            debt: (- (get debt current-vault) actual-amount),
+            last-block: block-height
+        }))
+        
+        (ok true)
+    )
     )
 )
 
