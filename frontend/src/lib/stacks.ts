@@ -16,17 +16,29 @@ export const userSession = new UserSession({
     sessionStore: new InstanceDataStore(),
 });
 
-const isMainnet = process.env.NEXT_PUBLIC_STACKS_NETWORK === "mainnet";
-export const EFFECTIVE_NETWORK = isMainnet ? "mainnet" : "testnet";
+export {
+    EFFECTIVE_NETWORK,
+    isMainnet,
+    CONTRACT_ADDRESS,
+    VAULT_CONTRACT,
+    AEUSD_CONTRACT,
+    LP_TOKEN_CONTRACT,
+    POOL_CONTRACT,
+    SBTC_CONTRACT,
+    BTC_TESTNET_CONTRACT
+} from "./network";
 
-export const CONTRACT_ADDRESS =
-    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
-export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v6";
-export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v5";
-export const LP_TOKEN_CONTRACT = "aegis-lp-token-v4";
-export const POOL_CONTRACT = "aegis-pool-v8";
-export const SBTC_CONTRACT = process.env.NEXT_PUBLIC_SBTC_CONTRACT || "mock-btc-v5";
-export const BTC_TESTNET_CONTRACT = "mock-btc-v5";
+import {
+    EFFECTIVE_NETWORK,
+    isMainnet,
+    CONTRACT_ADDRESS,
+    VAULT_CONTRACT,
+    AEUSD_CONTRACT,
+    LP_TOKEN_CONTRACT,
+    POOL_CONTRACT,
+    SBTC_CONTRACT,
+    BTC_TESTNET_CONTRACT
+} from "./network";
 
 /**
  * Safe Principal Parser to prevent Leather Wallet crashes
@@ -50,7 +62,7 @@ export const GET_SBTC_PRINCIPAL = () => {
 export const getAccountAddress = () => {
     if (!userSession.isUserSignedIn()) return null;
     const userData = userSession.loadUserData();
-    return userData.profile.stxAddress[EFFECTIVE_NETWORK === "mainnet" ? "mainnet" : "testnet"];
+    return userData.profile.stxAddress[isMainnet ? "mainnet" : "testnet"];
 };
 
 export const logout = () => {
@@ -101,7 +113,7 @@ export const submitContractIntent = async (intent: ContractIntent) => {
     const { openContractCall } = await import("@stacks/connect");
 
     await openContractCall({
-        network: EFFECTIVE_NETWORK,
+        network: EFFECTIVE_NETWORK as any,
         contractAddress: intent.contractAddress || CONTRACT_ADDRESS,
         contractName: intent.contractName,
         functionName: intent.functionName,
@@ -264,6 +276,8 @@ export const swapSBTCforAEUSD = (amountIn: number, sbtcToken: string) => {
 export const getSwapOutput = async (amountIn: number, fromToken: "aeUSD" | "sBTC") => {
     try {
         const reserves = await getPoolReserves();
+        if (!reserves) return 0;
+
         const reserveIn = fromToken === "aeUSD"
             ? BigInt(reserves.aeusd.value)
             : BigInt(reserves.sbtc.value);
@@ -274,7 +288,7 @@ export const getSwapOutput = async (amountIn: number, fromToken: "aeUSD" | "sBTC
         const amountInBN = BigInt(Math.round(amountIn * (fromToken === "aeUSD" ? 1e6 : 1e8)));
 
         const result = await fetchCallReadOnlyFunction({
-            network: EFFECTIVE_NETWORK,
+            network: EFFECTIVE_NETWORK as any,
             contractAddress: CONTRACT_ADDRESS,
             contractName: POOL_CONTRACT,
             functionName: "get-swap-output",
@@ -299,7 +313,7 @@ export const getSwapOutput = async (amountIn: number, fromToken: "aeUSD" | "sBTC
 export const getVaultStats = async (ownerAddress: string) => {
     try {
         const result = await fetchCallReadOnlyFunction({
-            network: EFFECTIVE_NETWORK,
+            network: EFFECTIVE_NETWORK as any,
             contractAddress: CONTRACT_ADDRESS,
             contractName: VAULT_CONTRACT,
             functionName: "get-vault", // Corrected function name
@@ -331,7 +345,7 @@ export const getVaultSBTC = async () => {
 export const getPoolReserves = async () => {
     try {
         const result = await fetchCallReadOnlyFunction({
-            network: EFFECTIVE_NETWORK,
+            network: EFFECTIVE_NETWORK as any,
             contractAddress: CONTRACT_ADDRESS,
             contractName: POOL_CONTRACT,
             functionName: "get-reserves",
@@ -362,7 +376,7 @@ export const getTokenBalance = async (ownerAddress: string, identifier: string) 
         }
 
         const result = await fetchCallReadOnlyFunction({
-            network: EFFECTIVE_NETWORK,
+            network: EFFECTIVE_NETWORK as any,
             contractAddress: addr,
             contractName: name,
             functionName: "get-balance",

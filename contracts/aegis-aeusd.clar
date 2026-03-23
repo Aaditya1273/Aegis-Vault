@@ -14,7 +14,7 @@
 (define-data-var token-decimals uint u6)
 
 ;; Authorization: Only the Vault contract can mint/burn
-(define-data-var vault-contract (optional principal) (some .aegis-vault-v6))
+(define-data-var vault-contract (optional principal) (some .aegis-vault-v20))
 
 ;; --- SIP-010 Functions ---
 

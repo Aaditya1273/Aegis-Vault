@@ -1,0 +1,44 @@
+id: 20
+name: Perfect Protocol Sync V20
+network: testnet
+stacks-node: "https://api.testnet.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+plan:
+  batches:
+    - id: 1
+      transactions:
+        - transaction-type: contract-publish
+          contract-name: aegis-aeusd-v20
+          expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+          path: contracts/aegis-aeusd.clar
+          anchor-block-only: true
+          clarity-version: 2
+          cost: 100000
+        - transaction-type: contract-publish
+          contract-name: aegis-lp-token-v20
+          expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+          path: contracts/aegis-lp-token.clar
+          anchor-block-only: true
+          clarity-version: 2
+          cost: 100000
+        - transaction-type: contract-publish
+          contract-name: aegis-vault-v20
+          expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+          path: contracts/aegis-vault.clar
+          anchor-block-only: true
+          clarity-version: 2
+          cost: 200000
+        - transaction-type: contract-publish
+          contract-name: aegis-pool-v20
+          expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+          path: contracts/aegis-pool.clar
+          anchor-block-only: true
+          clarity-version: 2
+          cost: 200000
+        - transaction-type: contract-publish
+          contract-name: aegis-auto-repay-v20
+          expected-sender: ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY
+          path: contracts/aegis-auto-repay.clar
+          anchor-block-only: true
+          clarity-version: 2
+          cost: 100000

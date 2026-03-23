@@ -24,7 +24,7 @@ export const useBalances = () => {
         setLoading(true);
         try {
             // Fetch all balances from Hiro API
-            const res = await window.fetch(`${HIRO_API}/v1/address/${stxAddress}/balances`);
+            const res = await window.fetch(`${HIRO_API}/extended/v1/address/${stxAddress}/balances`);
             const data = await res.json();
 
             // STX balance
@@ -36,7 +36,7 @@ export const useBalances = () => {
 
             // aeUSD balance
             const aeusdResult = await fetchCallReadOnlyFunction({
-                network: EFFECTIVE_NETWORK,
+                network: EFFECTIVE_NETWORK as any,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: AEUSD_CONTRACT,
                 functionName: "get-balance",
@@ -48,7 +48,7 @@ export const useBalances = () => {
             // BTC Testnet balance (Mock)
             try {
                 const btcResult = await fetchCallReadOnlyFunction({
-                    network: EFFECTIVE_NETWORK,
+                    network: EFFECTIVE_NETWORK as any,
                     contractAddress: CONTRACT_ADDRESS,
                     contractName: BTC_TESTNET_CONTRACT, // Dynamic target for simulation
                     functionName: "get-balance",

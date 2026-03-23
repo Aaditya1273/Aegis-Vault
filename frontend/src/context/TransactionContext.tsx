@@ -46,7 +46,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
         const interval = setInterval(async () => {
             for (const tx of pending) {
                 try {
-                    const res = await fetch(`https://api.testnet.hiro.so/v1/tx/${tx.txId}`);
+                    const res = await fetch(`https://api.testnet.hiro.so/extended/v1/tx/${tx.txId}`);
                     if (!res.ok) continue;
                     const data = await res.json();
 

@@ -34,15 +34,15 @@
     (default-to { collateral: u0, debt: u0, last-block: u0 } (map-get? vaults { user: user }))
 )
 
-;; Use the local Oracle contract for real-time pricing
+;; Use a stable baseline price for the hackathon ($100,000)
 (define-public (get-sbtc-price)
-    (contract-call? .aegis-oracle-v3 get-price)
+    (ok u10000000000)
 )
 
 (define-public (calculate-health-factor (user principal))
     (let (
         (vault (get-vault user))
-        (price (unwrap! (get-sbtc-price) (ok u0)))
+        (price u10000000000) ;; Hardcoded stable price
         (collateral-value (/ (* (get collateral vault) price) u100000000))
     )
         (if (is-eq (get debt vault) u0)
@@ -54,7 +54,8 @@
 
 (define-public (calculate-max-mint (collateral uint))
     (let (
-        (price (unwrap! (get-sbtc-price) (ok u0)))
+        ;; Hackathon Stability: Hardcoding $100,000 baseline to ensure minting success
+        (price u10000000000) 
         (collateral-value (/ (* collateral price) u100000000))
     )
     (ok (/ (* collateral-value ltv-ratio) u100))
@@ -96,7 +97,7 @@
         (asserts! (<= new-debt max-mint) err-insufficient-collateral)
         
         ;; Mint aeUSD to user using local contract reference
-        (try! (contract-call? .aegis-aeusd-v5 mint amount tx-sender))
+        (try! (contract-call? .aegis-aeusd-v20 mint amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {
@@ -119,7 +120,7 @@
         (asserts! (> actual-amount u0) err-invalid-amount)
         
         ;; Burn aeUSD
-        (try! (contract-call? .aegis-aeusd-v5 burn actual-amount tx-sender))
+        (try! (contract-call? .aegis-aeusd-v20 burn actual-amount tx-sender))
         
         ;; Update Vault
         (map-set vaults { user: tx-sender } (merge current-vault {

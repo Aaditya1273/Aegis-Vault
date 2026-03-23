@@ -8,49 +8,38 @@ cache_dir = "./.cache"
 [[project.requirements]]
 contract_id = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token"
 
-[[project.requirements]]
-contract_id = "SP1CGXWEAMG6P6FT04W66NVGJ7PQWMDAC19R7PJ0Y.pyth-oracle-v4"
-
-[[project.requirements]]
-contract_id = "SP1CGXWEAMG6P6FT04W66NVGJ7PQWMDAC19R7PJ0Y.pyth-storage-v4"
-
 [contracts.aegis-sip10-v3]
 path = "contracts/aegis-sip-010.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-aeusd-v5]
+[contracts.aegis-aeusd-v20]
 path = "contracts/aegis-aeusd.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-oracle-v3]
-path = "contracts/aegis-oracle.clar"
-clarity_version = 2
-epoch = "latest"
-
-[contracts.aegis-vault-v6]
+[contracts.aegis-vault-v20]
 path = "contracts/aegis-vault.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-sip10-v3", "aegis-oracle-v3", "aegis-aeusd-v5"]
+depends_on = ["aegis-sip10-v3", "aegis-aeusd-v20"]
 
-[contracts.aegis-auto-repay-v6]
+[contracts.aegis-auto-repay-v20]
 path = "contracts/aegis-auto-repay.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-vault-v6"]
+depends_on = ["aegis-vault-v20"]
 
-[contracts.aegis-lp-token-v4]
+[contracts.aegis-lp-token-v20]
 path = "contracts/aegis-lp-token.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-pool-v8]
+[contracts.aegis-pool-v20]
 path = "contracts/aegis-pool.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-sip10-v3", "aegis-aeusd-v5", "aegis-lp-token-v4"]
+depends_on = ["aegis-sip10-v3", "aegis-aeusd-v20", "aegis-lp-token-v20"]
 
 [contracts.mock-btc-v5]
 path = "contracts/mock-btc.clar"
