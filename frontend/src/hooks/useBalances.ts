@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { fetchCallReadOnlyFunction, cvToJSON, Cl } from "@stacks/transactions";
 import { userSession, EFFECTIVE_NETWORK, CONTRACT_ADDRESS, AEUSD_CONTRACT, BTC_TESTNET_CONTRACT } from "@/lib/stacks";
 
-const HIRO_API = "https://api.testnet.hiro.so";
+const HIRO_API = EFFECTIVE_NETWORK.client.baseUrl;
 // sBTC on testnet (SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)
 const SBTC_CONTRACT = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token";
 

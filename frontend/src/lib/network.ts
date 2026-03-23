@@ -9,8 +9,8 @@ export { isMainnet };
  * Total Protocol Synthesis: Official V7 Network Constants
  * V7 moved from Classes to POJO constants. 
  */
-const HIRO_TESTNET = "https://api.testnet.hiro.so";
-const HIRO_MAINNET = "https://api.mainnet.hiro.so";
+const HIRO_TESTNET = "https://stacks-node-api.testnet.stacks.co";
+const HIRO_MAINNET = "https://stacks-node-api.mainnet.stacks.co";
 
 const createNetwork = () => {
     const base = isMainnet ? STACKS_MAINNET : STACKS_TESTNET;
