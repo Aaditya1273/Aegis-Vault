@@ -16,3 +16,4 @@
   NEXT_PUBLIC_LP_TOKEN_CONTRACT = "aegis-lp-token-v21"
   NEXT_PUBLIC_POOL_CONTRACT = "aegis-pool-v21"
   NEXT_PUBLIC_IS_SUBNET = "false"
+  NPM_CONFIG_LEGACY_PEER_DEPS = "true"
