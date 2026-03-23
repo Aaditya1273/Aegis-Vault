@@ -23,45 +23,50 @@ export const useBalances = () => {
 
         setLoading(true);
         try {
-            // Fetch all balances from Hiro API
-            const res = await window.fetch(`${HIRO_API}/extended/v1/address/${stxAddress}/balances`);
-            const data = await res.json();
-
-            // STX balance
-            setStxBalance(Number(data?.stx?.balance ?? 0) / 1_000_000);
-
-            // sBTC balance
-            const sbtcEntry = data?.fungible_tokens?.[SBTC_CONTRACT];
-            setSbtcBalance(Number(sbtcEntry?.balance ?? 0) / 1_00_000_000);
-
-            // aeUSD balance
-            const aeusdResult = await fetchCallReadOnlyFunction({
-                network: EFFECTIVE_NETWORK as any,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: AEUSD_CONTRACT,
-                functionName: "get-balance",
-                functionArgs: [Cl.standardPrincipal(stxAddress)],
-                senderAddress: stxAddress,
-            });
-            setAeusdBalance(Number(cvToJSON(aeusdResult)?.value?.value ?? 0) / 1_000_000);
-
-            // BTC Testnet balance (Mock)
+            // Step 1: Broad balance check (STX, official sBTC)
             try {
-                const btcResult = await fetchCallReadOnlyFunction({
+                const res = await window.fetch(`${HIRO_API}/extended/v1/address/${stxAddress}/balances`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setStxBalance(Number(data?.stx?.balance ?? 0) / 1_000_000);
+                    const sbtcEntry = data?.fungible_tokens?.[SBTC_CONTRACT];
+                    if (sbtcEntry) setSbtcBalance(Number(sbtcEntry.balance || 0) / 1e8);
+                }
+            } catch (e) {
+                console.warn("[Aegis:Balances] Hiro Indexer Fetch Failed:", e);
+            }
+
+            // Step 2: Contract-Direct aeUSD
+            try {
+                const aeusdResult = await fetchCallReadOnlyFunction({
                     network: EFFECTIVE_NETWORK as any,
                     contractAddress: CONTRACT_ADDRESS,
-                    contractName: BTC_TESTNET_CONTRACT, // Dynamic target for simulation
+                    contractName: AEUSD_CONTRACT,
                     functionName: "get-balance",
                     functionArgs: [Cl.standardPrincipal(stxAddress)],
                     senderAddress: stxAddress,
                 });
-                setBtcTestnetBalance(Number(cvToJSON(btcResult)?.value?.value ?? 0) / 1_00_000_000);
+                setAeusdBalance(Number(cvToJSON(aeusdResult)?.value?.value ?? 0) / 1e6);
             } catch (e) {
-                console.error("[Aegis:Balances] Mock BTC fetch failed:", e);
-                setBtcTestnetBalance(0);
+                console.warn("[Aegis:Balances] aeUSD fetch failed:", e);
+            }
+
+            // Step 3: Mock BTC Simulation Balance
+            try {
+                const btcResult = await fetchCallReadOnlyFunction({
+                    network: EFFECTIVE_NETWORK as any,
+                    contractAddress: CONTRACT_ADDRESS,
+                    contractName: BTC_TESTNET_CONTRACT,
+                    functionName: "get-balance",
+                    functionArgs: [Cl.standardPrincipal(stxAddress)],
+                    senderAddress: stxAddress,
+                });
+                setBtcTestnetBalance(Number(cvToJSON(btcResult)?.value?.value ?? 0) / 1e8);
+            } catch (e) {
+                console.warn("[Aegis:Balances] Mock BTC fetch failed:", e);
             }
         } catch (e) {
-            console.error("Error fetching balances:", e);
+            console.error("[Aegis:Balances] Loop Error:", e);
         }
         setLoading(false);
     };

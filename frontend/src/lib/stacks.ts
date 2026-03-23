@@ -329,7 +329,11 @@ export const getVaultStats = async (ownerAddress: string) => {
             sbtcToken: json["sbtc-token"]?.value || "" // Not available in map, need separate fetch if I can
         };
     } catch (e) {
-        console.error("[Aegis:Error] getVaultStats failed:", e);
+        console.warn("[Aegis:Stats] Read failure:", e);
+        return {
+            collateral: { value: "0" },
+            debt: { value: "0" }
+        };
     }
 };
 
