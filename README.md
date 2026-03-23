@@ -1,95 +1,116 @@
-# Aegis-Vault
+# 🛡️ Aegis Vault: The Bitcoin-Native Federal Reserve
 
-**Decentralized, non-custodial credit protocol on Stacks**  
-Mint yield-bearing stablecoin (aeUSD) against sBTC collateral — where the loan **auto-repays itself** using Stacks Proof-of-Transfer (PoX) rewards.
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Stacks](https://img.shields.io/badge/Stacks-L2-5546FF?style=flat-square&logo=stacks)](https://stacks.co/)
+[![Clarity](https://img.shields.io/badge/Clarity-Smart%20Contracts-orange?style=flat-square)](https://clarity-lang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-## Introduction
+**Decentralized, non-custodial credit protocol on Stacks.**  
+Mint institutional-grade stablecoins (**aeUSD**) against **sBTC** collateral, where the debt auto-repays itself using native Bitcoin yield.
 
-Aegis-Vault unlocks the full potential of Bitcoin as productive capital. Bitcoin holders can now access instant liquidity (aeUSD stablecoin) without selling their BTC or making manual repayments. By leveraging sBTC as collateral and native PoX yield, the protocol turns "lazy" Bitcoin into self-sustaining, debt-repaying money — all while staying fully non-custodial and Bitcoin-secured.
+---
 
-Built for the **Buidl Battle: The Bitcoin Builders Tournament** on Stacks.
+## 📽️ Cinematic Pitch & Vision
+> "Bitcoin has a $2 Trillion problem: it's lazy money. Aegis Vault makes Bitcoin work so you don't have to."
 
-- **Live Demo**: [Link if deployed]
-- **GitHub Repo**: [Link]
-- **Pitch Video**: [YouTube/Vimeo link, <5 mins]
+Aegis Vault turns Bitcoin into productive capital. By leveraging **sBTC** and Stacks' **Proof-of-Transfer (PoX)** rewards, we've built a protocol where loans aren't a burden—they are a self-sustaining asset.
 
-## The Problem: The HODLer's Dilemma
+---
 
-Bitcoin is the world's hardest money — but it's also the laziest.  
-- Holders want to **HODL forever** but often need liquidity for real-world use.  
-- Traditional loans force selling BTC, monthly payments, or risky custodians.  
-- Existing DeFi lending on other chains suffers from hacks, high fees, and poor Bitcoin integration.  
-- Result: ~$2 Trillion in BTC sits idle, earning nothing while users miss opportunities.
+## 🧩 The Architecture
+Aegis Vault utilizes a multi-layered synchronization between the **Next.js Obsidian UI**, the **Stacks Blockchain**, and **Clarity Smart Contracts**.
 
-Bitcoin needs a way to **work harder** without compromising security or sovereignty.
+### **System Workflow**
+```mermaid
+graph TD
+    subgraph "Frontend Layer"
+        UI[Obsidian Dashboard]
+        Hooks[Resilient useBalances / useVaultData]
+    end
 
-## The Solution: Self-Repaying Loans Powered by PoX
+    subgraph "Blockchain Layer (Stacks L2)"
+        NodeAPI[Official Stacks Node API]
+        Wallet[Leather / Xverse]
+    end
 
-Aegis-Vault is a **decentralized credit protocol** on Stacks:
+    subgraph "Core Protocol (Clarity v20/v21)"
+        Vault[Aegis-Vault-v20]
+        Stablecoin[Aegis-aeUSD-v20]
+        Pool[Aegis-Pool-v21]
+        MockBTC[Mock-BTC-v5 / sBTC]
+    end
 
-1. User pegs BTC → sBTC (trustless via sBTC bridge).  
-2. Deposits sBTC as collateral → mints aeUSD (stablecoin pegged to USD).  
-3. **No monthly payments** — accrued PoX rewards (Stacks' native yield from Proof-of-Transfer) automatically repay the debt over time.  
-4. **Auto-Deleverage Engine**: If BTC/USD price drops (via decentralized oracle like RedStone/Pyth), protocol uses incoming PoX rewards to buy back collateral and prevent liquidation cascades.  
-5. **One-Click UX** via Stacks Account Abstraction — feels like a modern banking app: "Deposit BTC → Get Dollars."
+    UI --> Hooks
+    Hooks <--> NodeAPI
+    NodeAPI <--> Vault
+    Vault -- "Self-Repaying Logic" --> Stablecoin
+    Pool -- "Yield Loop" --> Stablecoin
+```
 
-Collateral remains self-custodial; everything runs on Clarity smart contracts secured by Bitcoin.
+---
 
-## Uniqueness & Differentiation
+## 🚀 Key Features
 
-- **Native PoX-powered auto-repayment** — First protocol to make loans literally pay themselves using Stacks' consensus yield (not external staking or incentives).  
-- **sBTC as core collateral** — Directly drives demand for sBTC peg-ins and locks real BTC liquidity into Stacks.  
-- **Mathematical security via Clarity** — Decidable language allows formal verification; impossible to have "drainable" bugs like Solidity exploits (Celsius/FTX class failures).  
-- **Auto-Deleverage** — Proactive risk management using protocol yield instead of brutal liquidations.  
-- **Production-scale ready** — Optional deployment on Stacks Hyper-chains/Subnets for high TPS if needed.
+*   **⚡ Instant Liquidity**: Peg-in BTC and mint aeUSD in one click with our account-abstracted UX.
+*   **🔄 Self-Repaying Mechanics**: Protocol yield (PoX/LP rewards) is automatically directed to satisfy principal debt.
+*   **💎 Obsidian Aesthetic**: A premium, high-stakes interface designed for the next generation of Bitcoin maximalists.
+*   **🛡️ Mathematical Security**: Built with Clarity—a decidable, non-Turing complete language that is mathematically incapable of many common Solidity exploits.
+*   **🌐 Resilient Fetching**: Native integration with the stable Stacks Node RPC for real-time balance tracking.
 
-Unlike basic over-collateralized lending (e.g., Aave-style forks), Aegis creates **sustainable, Bitcoin-native yield loops**.
+---
 
-## Why This Wins 1st Place in Buidl Battle
+## 📜 Smart Contract Registry (Testnet)
 
-**Perfect alignment with judging criteria & bounties:**
+| Contract | Version | Principal Address |
+| :--- | :--- | :--- |
+| **Aegis Vault** | `v20` | `ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aegis-vault-v20` |
+| **aeUSD Stablecoin**| `v20` | `ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aegis-aeusd-v20` |
+| **Liquidity Pool**  | `v21` | `ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aegis-pool-v21` |
+| **LP Token**        | `v21` | `ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.aegis-lp-token-v21` |
+| **BTC Simulation**  | `v5`  | `ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY.mock-btc-v5` |
 
-- **Innovation** — Solves HODLer's dilemma creatively with self-repaying mechanics.  
-- **Technical Implementation** — Deep Clarity usage, oracle integration, auto-logic, security proofs.  
-- **Stacks Alignment** — Heavy leverage of sBTC, PoX, Clarity, account abstraction — textbook ecosystem driver.  
-- **User Experience** — Mainstream-friendly one-click flow.  
-- **Impact Potential** — Massive sBTC TVL growth, aeUSD liquidity for Stacks DeFi, healthier PoX participation.
+---
 
-**Bounty Sweep Potential**:
-- **Most Innovative Use of sBTC** — Creates highest demand (mandatory collateral + yield loop).  
-- Strong fit for UX/Institutional themes (account abstraction + Clarity proofs).
+## 🛠️ Tech Stack
 
-Top 3 get Stacks Labs 1:1 + Endowment intros — ideal for turning this into production.
+*   **Frontend**: Next.js 15, Tailwind CSS, Framer Motion, Lucide Icons.
+*   **State**: Stacks.js (v7 Protocol Synthesis), Custom React Hooks for real-time network resilience.
+*   **Smart Contracts**: Clarity (Stacks L2 Smart Contracts).
+*   **Development**: Clarinet for localized testing and contract simulation.
 
-## Technical Highlights
+---
 
-- **sBTC native peg-in/out** in contracts.  
-- **Decentralized price oracle** (RedStone/Pyth) for BTC/USD monitoring.  
-- **Auto-Deleverage** smart contract logic to use PoX rewards for collateral protection.  
-- **Account Abstraction** for seamless onboarding.  
-- **Clarity contracts** — verifiable, no reentrancy/overflow risks.
+## 🏃 Getting Started
 
-## Business Model (Revenue Engine)
+### **1. Prerequisites**
+*   [Leather Wallet](https://leather.io/) or [Xverse](https://www.xverse.app/) (Set to **Testnet**).
+*   Node.js v18+.
 
-Sustainable from day one:
+### **2. Local Setup**
+```bash
+git clone https://github.com/Aaditya1273/Aegis-Vault.git
+cd Aegis-Vault/frontend
+npm install
+npm run dev
+```
 
-- **PoX Reward Spread** — Protocol takes ~0.5% of accrued rewards.  
-- **Minting Fee** — 0.1% on aeUSD issuance.  
-- **Liquidity Partnerships** — aeUSD becomes desirable stablecoin; DEXs/protocols pay to integrate/bridge it.  
-- Long-term: Governance token or fees from expanded vaults.
+### **3. Claim Testnet BTC**
+Head to the **Deposit** page and use our **Institutional Bridge Simulation** button to claim mock BTC for hacking.
 
-Positions Aegis as a **kingmaker** for Stacks liquidity.
+---
 
-## Pitch Strategy (Founder-Level, Not Hacker-Level)
+## 🏆 Buidl Battle Submission
+Aegis Vault aligns perfectly with the **Bitcoin Builders Tournament** vision:
+1.  **Innovation**: Pooled PoX yield for debt amortization.
+2.  **sBTC Demand**: Creates a high-utility sink for pegged Bitcoin.
+3.  **UI/UX Excellence**: Institutional-grade interface that rivals modern fintech.
 
-**Video Structure (<5 mins):**
+---
 
-1. **Hook** (0–15s): "Bitcoin has a $2 Trillion problem: it's lazy money. Aegis-Vault makes Bitcoin work so you don't have to."  
-2. **Problem & Demo** (15–90s): Show live BTC → sBTC → aeUSD mint + auto-repay simulation in <10 seconds.  
-3. **Vision** (90–120s): "We aren't building a dApp. We're building the Federal Reserve of Bitcoin."  
-4. **Proof** (120–180s): Highlight Clarity formal verification ("Mathematically incapable of Celsius/FTX bugs") + sBTC demand impact.  
-5. **Call to Action** (end): Ecosystem growth + production roadmap.
+## ⚖️ License
+Distributed under the MIT License. See `LICENSE` for more information.
 
-This isn't just a hackathon project — it's the launchpad for Bitcoin-native credit at scale.
+---
 
-🚀 Built for Buidl Battle. Let's make Bitcoin productive.
+*Built with ❤️ for the Bitcoin Builders Community.*  
+**[Pitch Video Script](./docs/cinematic_script.md)** | **[Technical Docs](./docs/idea.md)**
