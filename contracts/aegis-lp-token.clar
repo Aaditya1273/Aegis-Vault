@@ -12,7 +12,7 @@
 (define-data-var token-decimals uint u6)
 
 ;; --- Authorization ---
-(define-data-var pool-contract (optional principal) none)
+(define-data-var pool-contract (optional principal) (some .aegis-pool-v21))
 
 (define-public (set-pool-contract (new-pool principal))
     (begin

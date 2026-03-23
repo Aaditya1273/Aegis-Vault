@@ -30,16 +30,16 @@ clarity_version = 2
 epoch = "latest"
 depends_on = ["aegis-vault-v20"]
 
-[contracts.aegis-lp-token-v20]
+[contracts.aegis-lp-token-v21]
 path = "contracts/aegis-lp-token.clar"
 clarity_version = 2
 epoch = "latest"
 
-[contracts.aegis-pool-v20]
+[contracts.aegis-pool-v21]
 path = "contracts/aegis-pool.clar"
 clarity_version = 2
 epoch = "latest"
-depends_on = ["aegis-sip10-v3", "aegis-aeusd-v20", "aegis-lp-token-v20"]
+depends_on = ["aegis-sip10-v3", "aegis-aeusd-v20", "aegis-lp-token-v21"]
 
 [contracts.mock-btc-v5]
 path = "contracts/mock-btc.clar"

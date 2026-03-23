@@ -43,7 +43,7 @@
 ;; 1. Add Liquidity
 (define-public (add-liquidity (amount-aeusd uint) (amount-sbtc uint) (sbtc-token <sip-010-trait>))
     (let (
-        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v20 get-total-supply)))
+        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v21 get-total-supply)))
         (reserves (get-reserves))
         (lp-to-mint 
             (if (is-eq total-lp u0)
@@ -64,7 +64,7 @@
         
         (var-set reserve-aeusd (+ (get aeusd reserves) amount-aeusd))
         (var-set reserve-sbtc (+ (get sbtc reserves) amount-sbtc))
-        (try! (as-contract (contract-call? .aegis-lp-token-v20 mint lp-to-mint tx-sender)))
+        (try! (as-contract (contract-call? .aegis-lp-token-v21 mint lp-to-mint tx-sender)))
         (ok lp-to-mint)
     )
 )
@@ -72,7 +72,7 @@
 ;; 2. Remove Liquidity
 (define-public (remove-liquidity (lp-amount uint) (sbtc-token <sip-010-trait>))
     (let (
-        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v20 get-total-supply)))
+        (total-lp (unwrap-panic (contract-call? .aegis-lp-token-v21 get-total-supply)))
         (reserves (get-reserves))
         (share-aeusd (/ (* lp-amount (get aeusd reserves)) total-lp))
         (share-sbtc (/ (* lp-amount (get sbtc reserves)) total-lp))
@@ -80,7 +80,7 @@
         (asserts! (> lp-amount u0) err-invalid-amount)
         (asserts! (<= lp-amount total-lp) err-insufficient-liquidity)
         
-        (try! (contract-call? .aegis-lp-token-v20 burn lp-amount tx-sender))
+        (try! (contract-call? .aegis-lp-token-v21 burn lp-amount tx-sender))
         (try! (as-contract (contract-call? .aegis-aeusd-v20 transfer share-aeusd (as-contract tx-sender) tx-sender none)))
         (try! (as-contract (contract-call? sbtc-token transfer share-sbtc (as-contract tx-sender) tx-sender none)))
         

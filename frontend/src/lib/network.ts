@@ -37,7 +37,7 @@ export const CONTRACT_ADDRESS =
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "ST2NJZE3SPW0GCPC0YE4V805HTSAGNQJF1HXT6PKY";
 export const VAULT_CONTRACT = process.env.NEXT_PUBLIC_VAULT_CONTRACT || "aegis-vault-v20";
 export const AEUSD_CONTRACT = process.env.NEXT_PUBLIC_AEUSD_CONTRACT || "aegis-aeusd-v20";
-export const LP_TOKEN_CONTRACT = "aegis-lp-token-v20";
-export const POOL_CONTRACT = "aegis-pool-v20";
+export const LP_TOKEN_CONTRACT = "aegis-lp-token-v21";
+export const POOL_CONTRACT = "aegis-pool-v21";
 export const SBTC_CONTRACT = process.env.NEXT_PUBLIC_SBTC_CONTRACT || "mock-btc-v5";
 export const BTC_TESTNET_CONTRACT = "mock-btc-v5";

@@ -102,7 +102,7 @@ export default function DashboardPage() {
                                                 </div>
 
                                                 <div className="space-y-4">
-                                                    <div className="text-7xl md:text-9xl font-black headline-font tracking-tighter tabular-nums text-white inline-flex items-baseline">
+                                                    <div className="text-6xl md:text-8xl font-black headline-font tracking-tighter tabular-nums text-white inline-flex items-baseline">
                                                         <span className="text-primary-container opacity-50 mr-2">$</span>
                                                         {integerPart}<span className="text-white/20">{decimalPart}</span>
                                                     </div>
