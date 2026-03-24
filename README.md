@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/Aaditya1273/Aegis-Vault/main/.github/assets/aegis_vault_banner.png" alt="Aegis Vault Banner" width="100%" />
 
-# 🛡️ Aegis Vault: The Bitcoin-Native Federal Reserve
+# Aegis Vault: The Bitcoin-Native Federal Reserve
 
 **Transforming Bitcoin from a "passive store of value" into an "active, self-repaying asset."**
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 📽️ The Vision
+## The Vision
 
 > "Bitcoin has a **$2 Trillion problem**: it's lazy money. Aegis Vault makes Bitcoin work so you don't have to."
 
@@ -42,7 +42,21 @@ Mint institutional-grade stablecoins (**aeUSD**) against your Bitcoin collateral
 
 Aegis Vault utilizes a sophisticated multi-layered synchronization between the Next.js frontend, wallet layers, the Stacks Blockchain, and Clarity Smart Contracts.
 
+### User Flow
+
+<div align="center">
+  <img src="./userflow.png" alt="Aegis Vault User Flow" width="100%" />
+</div>
+
+<br>
+
 ### System Topography
+
+<div align="center">
+  <img src="./archi.png" alt="Aegis Vault Architecture" width="100%" />
+</div>
+
+<br>
 
 ```mermaid
 flowchart TB
